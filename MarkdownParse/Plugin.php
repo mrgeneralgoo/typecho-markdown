@@ -5,7 +5,7 @@
  *
  * @package MarkdownParse
  * @author  mrgeneral
- * @version 1.0.0
+ * @version 1.0.1
  * @link    https://www.chengxiaobai.cn
  */
 class MarkdownParse_Plugin implements Typecho_Plugin_Interface
@@ -37,15 +37,16 @@ class MarkdownParse_Plugin implements Typecho_Plugin_Interface
 
         $content = ParsedownExtra::instance()->setBreaksEnabled(true)->text($text);
 
-        return preg_match('/^<p> *\[TOC\]\s*<\/p>$/m', $content) ? self::buildToc($content) : $content;
+        return preg_match('#^<p> *\[TOC\]\s*</p>$#m', $content) ? self::buildToc($content) : $content;
     }
 
     public static function buildToc($content)
     {
-        $document  = new \DOMDocument();
-        $htmlStart = '<!DOCTYPE html><html><head><meta charset="UTF-8" /></head><body>';
-        $htmlEnd   = '</body></html>';
-        $document->loadHTML($htmlStart . $content . $htmlEnd);
+        $document    = new \DOMDocument();
+        $contentType = '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">';
+        $htmlStart   = '<html><head><meta charset="UTF-8"></head><body>';
+        $htmlEnd     = '</body></html>';
+        $document->loadHTML($contentType . $htmlStart . $content . $htmlEnd, LIBXML_COMPACT);
 
         $xpath    = new \DOMXPath($document);
         $elements = $xpath->query('//h1|//h2|//h3|//h4|//h5|//h6');
@@ -88,6 +89,6 @@ class MarkdownParse_Plugin implements Typecho_Plugin_Interface
         // child end and parents end
         $tocContent .= '</li></ul>';
 
-        return preg_replace('/^<p> *\[TOC\]\s*<\/p>$/m', $tocContent, $document->saveHTML());
+        return preg_replace(["#$contentType#", "#$htmlStart#", '#^<p> *\[TOC\]\s*</p>$#m', "#$htmlEnd#"], [$tocContent], $xpath->document->saveHTML());
     }
 }
