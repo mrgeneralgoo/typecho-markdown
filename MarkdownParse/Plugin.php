@@ -89,6 +89,6 @@ class MarkdownParse_Plugin implements Typecho_Plugin_Interface
         // child end and parents end
         $tocContent .= '</li></ul>';
 
-        return preg_replace(["#$contentType#", "#$htmlStart#", '#^<p> *\[TOC\]\s*</p>$#m', "#$htmlEnd#"], [$tocContent], $xpath->document->saveHTML());
+        return preg_replace(['#^<p> *\[TOC\]\s*</p>$#m', "#$contentType#", "#$htmlStart#", "#$htmlEnd#"], [$tocContent], $xpath->document->saveHTML());
     }
 }
