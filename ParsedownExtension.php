@@ -9,6 +9,42 @@ class ParsedownExtension extends Parsedown
     protected $rawTocList        = [];
     protected $findTocSyntaxRule = '#^<p> *\[TOC\]\s*</p>$#m';
 
+    public function __construct()
+    {
+        // add formula support by Lovesy
+        $this->InlineTypes['$'] = array('Formula');
+        $this->inlineMarkerList .= '$';
+    }
+
+    protected function inlineFormula($Excerpt)
+    {
+        $text = $Excerpt[ 'text' ];
+        preg_match( '/\$+/', $text, $match );
+        $formula = $match[ 0 ];
+        $length = strlen( $formula );
+        switch ( $length ) {
+            case 1: $pattern = '/\$(\\\\\$|[^\$])+\$/';
+            case 2: {
+                if ( ! isset( $pattern ) ) {
+                    $pattern = '/\$\$(\\\\\$|\n|[^$]|[$][^$]+[$])+\$\$/';
+                }
+                preg_match( $pattern, $text, $match );
+                if ( count( $match ) )
+                {
+                    $formula = $match[ 0 ];
+                    $length = strlen( $formula );
+                    break;
+                }
+            }
+            default: {
+                $formula = "$";
+                $length = 1;
+            }
+        }
+        return array( 'element' => $this->inlineText($formula),
+                      'extent' => $length );
+    }
+
     public function setTocEnabled($isTocEnable)
     {
         $this->isTocEnabled = $isTocEnable;
