@@ -11,6 +11,13 @@ class ParsedownExtension extends Parsedown
     protected $originalBlockRuleList  = ['$' => '/\${1,2}[^`]*\${1,2}/m'];
     protected $absoluteUrl            = '';
 
+    /**
+     * Enable toc parse
+     *
+     * @param bool $isTocEnable
+     *
+     * @return $this
+     */
     public function setTocEnabled($isTocEnable)
     {
         $this->isTocEnabled = $isTocEnable;
@@ -18,6 +25,13 @@ class ParsedownExtension extends Parsedown
         return $this;
     }
 
+    /**
+     * Set toc parse rule
+     *
+     * @param string $findTocSyntaxRule
+     *
+     * @return $this
+     */
     public function setTocSyntaxRule($findTocSyntaxRule)
     {
         $this->findTocSyntaxRule = $findTocSyntaxRule;
@@ -25,6 +39,13 @@ class ParsedownExtension extends Parsedown
         return $this;
     }
 
+    /**
+     * Enable original block parse
+     *
+     * @param bool $isOriginalBlockEnabled
+     *
+     * @return $this
+     */
     public function setIsOriginalBlockEnabled($isOriginalBlockEnabled)
     {
         $this->isOriginalBlockEnabled = $isOriginalBlockEnabled;
@@ -32,6 +53,13 @@ class ParsedownExtension extends Parsedown
         return $this;
     }
 
+    /**
+     * Set original block parse rule
+     *
+     * @param string $originalBlockRule
+     *
+     * @return $this
+     */
     public function addOriginalBlockRule($originalBlockRule)
     {
         $this->originalBlockRuleList = array_merge($this->originalBlockRuleList, $originalBlockRule);
@@ -39,6 +67,13 @@ class ParsedownExtension extends Parsedown
         return $this;
     }
 
+    /**
+     * Set absolute url for toc
+     *
+     * @param string $absoluteUrl
+     *
+     * @return $this
+     */
     public function setAbsoluteUrl($absoluteUrl)
     {
         $this->absoluteUrl = $absoluteUrl;
@@ -46,11 +81,25 @@ class ParsedownExtension extends Parsedown
         return $this;
     }
 
+    /**
+     * Parse text
+     *
+     * @param string $text
+     *
+     * @return string
+     */
     public function text($text)
     {
         return $this->handleAfter(parent::text($this->handleBefore($text)));
     }
 
+    /**
+     * Hook before parse
+     *
+     * @param string $text
+     *
+     * @return string
+     */
     protected function handleBefore($text)
     {
         array_map(function ($originalBlockMark) {
@@ -62,6 +111,13 @@ class ParsedownExtension extends Parsedown
         return $text;
     }
 
+    /**
+     * Hook after parse
+     *
+     * @param string $text
+     *
+     * @return string
+     */
     protected function handleAfter($text)
     {
         if (!$this->isTocEnabled || empty($this->rawTocList) || !preg_match($this->findTocSyntaxRule, $text)) {
@@ -71,6 +127,11 @@ class ParsedownExtension extends Parsedown
         return preg_replace($this->findTocSyntaxRule, $this->buildToc(), $text);
     }
 
+    /**
+     * Build toc
+     *
+     * @return string
+     */
     protected function buildToc()
     {
         $tocMarkdownContent = '';
@@ -85,6 +146,14 @@ class ParsedownExtension extends Parsedown
         return parent::text($tocMarkdownContent);
     }
 
+    /**
+     * Add inline elements,applies the given handle list to the marker, handle function name like "inline{$handle}"
+     *
+     * @param string $inlineMarker
+     * @param array  $inlineHandleList
+     *
+     * @return $this
+     */
     public function addInlineElements($inlineMarker, $inlineHandleList)
     {
         if (strpos($this->inlineMarkerList, $inlineMarker) === false) {
@@ -96,6 +165,14 @@ class ParsedownExtension extends Parsedown
         return $this;
     }
 
+    /**
+     * Add block elements, applies the given handle list to the marker, handle function name like "block{$handle}"
+     *
+     * @param string $blockMarker
+     * @param array  $blockHandleList
+     *
+     * @return $this
+     */
     public function addBlockElements($blockMarker, $blockHandleList)
     {
         $this->BlockTypes[$blockMarker] = array_merge(isset($this->BlockTypes[$blockMarker]) ? $this->BlockTypes[$blockMarker] : [], is_array($blockHandleList) ? $blockHandleList : (array)$blockHandleList);
@@ -103,6 +180,13 @@ class ParsedownExtension extends Parsedown
         return $this;
     }
 
+    /**
+     * Parse header
+     *
+     * @param $line
+     *
+     * @return array
+     */
     protected function blockHeader($line)
     {
         $block = parent::blockHeader($line);
@@ -122,13 +206,13 @@ class ParsedownExtension extends Parsedown
     }
 
     /**
-     * parsing for original block
+     * Parse original
      *
      * @see https://github.com/mrgeneralgoo/typecho-markdown/pull/7
      *
-     * @param $excerpt
+     * @param array $excerpt
      *
-     * @return array|null
+     * @return array
      */
     protected function inlineOriginal($excerpt)
     {
