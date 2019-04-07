@@ -5,7 +5,7 @@ require_once 'Parsedown.php';
 class ParsedownExtension extends Parsedown
 {
     protected $isTocEnable           = false;
-    protected $findTocSyntaxRule     = '#^<p>\s*\[TOC\]\s*</p>$#m';
+    protected $findTocSyntaxRule     = '/^<p>\s*\[TOC\]\s*<\/p>$/m';
     protected $originalBlockRuleList = ['$' => '/\${1,2}[^`]*\${1,2}/m'];
     protected $absoluteUrl           = '';
 
@@ -97,7 +97,7 @@ class ParsedownExtension extends Parsedown
         }, array_keys($this->originalBlockRuleList));
 
         // init toc switch
-        $this->isMatureTocEnable = $this->isTocEnable && preg_match($this->findTocSyntaxRule, $text);
+        $this->isMatureTocEnable = $this->isTocEnable && preg_match('/\s*\[TOC\]\s*/m', $text);
 
         return $text;
     }
