@@ -5,10 +5,12 @@ require_once 'Parsedown.php';
 class ParsedownExtension extends Parsedown
 {
     protected $isTocEnable           = false;
-    protected $rawTocList            = [];
     protected $findTocSyntaxRule     = '#^<p>\s*\[TOC\]\s*</p>$#m';
     protected $originalBlockRuleList = ['$' => '/\${1,2}[^`]*\${1,2}/m'];
     protected $absoluteUrl           = '';
+
+    private $isMatureTocEnable = false; // for performance
+    private $rawTocList        = []; // temp store
 
     /**
      * Enable toc parse
@@ -19,9 +21,7 @@ class ParsedownExtension extends Parsedown
      */
     public function setTocEnabled($isTocEnable)
     {
-        $this->isTocEnable = function () use ($isTocEnable) {
-            return $isTocEnable;
-        };
+        $this->isTocEnable = $isTocEnable;
 
         return $this;
     }
@@ -96,11 +96,8 @@ class ParsedownExtension extends Parsedown
 
         }, array_keys($this->originalBlockRuleList));
 
-        // override $isTocEnable
-        $isTocEnable       = ($this->isTocEnable)();
-        $this->isTocEnable = function () use ($isTocEnable, $text) {
-            return $isTocEnable && preg_match($this->findTocSyntaxRule, $text);
-        };
+        // init toc switch
+        $this->isMatureTocEnable = $this->isTocEnable && preg_match($this->findTocSyntaxRule, $text);
 
         return $text;
     }
@@ -114,8 +111,7 @@ class ParsedownExtension extends Parsedown
      */
     protected function handleAfter($text)
     {
-        // generate toc
-        if (($this->isTocEnable)()) {
+        if ($this->isMatureTocEnable) {
             $text = preg_replace($this->findTocSyntaxRule, $this->buildToc(), $text);
             // cleanup
             $this->rawTocList = [];
@@ -190,7 +186,7 @@ class ParsedownExtension extends Parsedown
     {
         $block = parent::blockHeader($line);
 
-        if (!($this->isTocEnable)()) {
+        if (!$this->isMatureTocEnable) {
             return $block;
         }
 
