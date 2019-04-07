@@ -4,12 +4,11 @@ require_once 'Parsedown.php';
 
 class ParsedownExtension extends Parsedown
 {
-    protected $isTocEnabled           = false;
-    protected $rawTocList             = [];
-    protected $findTocSyntaxRule      = '#^<p>\s*\[TOC\]\s*</p>$#m';
-    protected $isOriginalBlockEnabled = false;
-    protected $originalBlockRuleList  = ['$' => '/\${1,2}[^`]*\${1,2}/m'];
-    protected $absoluteUrl            = '';
+    protected $isTocEnable           = false;
+    protected $rawTocList            = [];
+    protected $findTocSyntaxRule     = '#^<p>\s*\[TOC\]\s*</p>$#m';
+    protected $originalBlockRuleList = ['$' => '/\${1,2}[^`]*\${1,2}/m'];
+    protected $absoluteUrl           = '';
 
     /**
      * Enable toc parse
@@ -20,7 +19,9 @@ class ParsedownExtension extends Parsedown
      */
     public function setTocEnabled($isTocEnable)
     {
-        $this->isTocEnabled = $isTocEnable;
+        $this->isTocEnable = function () use ($isTocEnable) {
+            return $isTocEnable;
+        };
 
         return $this;
     }
@@ -40,23 +41,9 @@ class ParsedownExtension extends Parsedown
     }
 
     /**
-     * Enable original block parse
-     *
-     * @param bool $isOriginalBlockEnabled
-     *
-     * @return $this
-     */
-    public function setIsOriginalBlockEnabled($isOriginalBlockEnabled)
-    {
-        $this->isOriginalBlockEnabled = $isOriginalBlockEnabled;
-
-        return $this;
-    }
-
-    /**
      * Set original block parse rule
      *
-     * @param string $originalBlockRule
+     * @param array $originalBlockRule
      *
      * @return $this
      */
@@ -102,11 +89,18 @@ class ParsedownExtension extends Parsedown
      */
     protected function handleBefore($text)
     {
+        // register elements handles
         array_map(function ($originalBlockMark) {
 
             $this->addInlineElements($originalBlockMark, ['Original']);
 
         }, array_keys($this->originalBlockRuleList));
+
+        // override $isTocEnable
+        $isTocEnable       = ($this->isTocEnable)();
+        $this->isTocEnable = function () use ($isTocEnable, $text) {
+            return $isTocEnable && preg_match($this->findTocSyntaxRule, $text);
+        };
 
         return $text;
     }
@@ -120,11 +114,14 @@ class ParsedownExtension extends Parsedown
      */
     protected function handleAfter($text)
     {
-        if (!$this->isTocEnabled || empty($this->rawTocList) || !preg_match($this->findTocSyntaxRule, $text)) {
-            return $text;
+        // generate toc
+        if (($this->isTocEnable)()) {
+            $text = preg_replace($this->findTocSyntaxRule, $this->buildToc(), $text);
+            // cleanup
+            $this->rawTocList = [];
         }
 
-        return preg_replace($this->findTocSyntaxRule, $this->buildToc(), $text);
+        return $text;
     }
 
     /**
@@ -134,14 +131,16 @@ class ParsedownExtension extends Parsedown
      */
     protected function buildToc()
     {
+        if (empty($this->rawTocList)) {
+            return '';
+        }
+
         $tocMarkdownContent = '';
         $topHeadLevel       = min(array_column($this->rawTocList, 'level'));
 
         foreach ($this->rawTocList as $id => $tocItem) {
             $tocMarkdownContent .= sprintf('%s- [%s](%s#%s)' . PHP_EOL, str_repeat('  ', $tocItem['level'] - $topHeadLevel), $this->line($tocItem['text']), $this->absoluteUrl, $id);
         }
-
-        $this->rawTocList = [];
 
         return parent::text($tocMarkdownContent);
     }
@@ -190,8 +189,13 @@ class ParsedownExtension extends Parsedown
     protected function blockHeader($line)
     {
         $block = parent::blockHeader($line);
-        $text  = $block['element']['handler']['argument'];
-        $id    = urlencode($this->line($text));
+
+        if (!($this->isTocEnable)()) {
+            return $block;
+        }
+
+        $text = $block['element']['handler']['argument'];
+        $id   = urlencode($this->line($text));
 
         $block['element']['attributes'] = [
             'id' => $id,
@@ -212,11 +216,10 @@ class ParsedownExtension extends Parsedown
      *
      * @param array $excerpt
      *
-     * @return array
+     * @return array|null
      */
     protected function inlineOriginal($excerpt)
     {
-
         $originalBlockMark = substr($excerpt['text'], 0, 1);
 
         if (!isset($this->originalBlockRuleList[$originalBlockMark]) || !preg_match($this->originalBlockRuleList[$originalBlockMark], $excerpt['text'], $originalBlock) || empty($originalBlock[0])) {

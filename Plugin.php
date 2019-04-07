@@ -39,7 +39,6 @@ class MarkdownParse_Plugin implements Typecho_Plugin_Interface
         return ParsedownExtension::instance()
             ->setBreaksEnabled(true)
             ->setTocEnabled(true)
-            ->setIsOriginalBlockEnabled(true)
             ->text($text);
     }
 }
