@@ -1,3 +1,11 @@
+## v1.2.3 (2020-05-02)
+
+Fix ([#13](https://github.com/mrgeneralgoo/typecho-markdown/issues/13))
+
+## v1.2.2 (2019-06-09)
+
+Support toc parsing becomes optional, parsing is enabled by default
+
 ## v1.2.1 (2019-04-07)
 
 Support  original text output when no  `[TOC]` syntax is detected ([#9](https://github.com/mrgeneralgoo/typecho-markdown/issues/9))
@@ -27,6 +35,14 @@ Supported `[TOC]` syntax to generate table of contents ([ea851ae](https://github
 The first release
 
 ------
+
+## v1.2.3 (2020-05-02)
+
+修复 `$$` 和 markdown 语法共存在一段有时会导致 markdown 不解析问题 ([#13](https://github.com/mrgeneralgoo/typecho-markdown/issues/13))
+
+## v1.2.2 (2019-06-09)
+
+目录解析功能成为可选项，默认开启。
 
 ## v1.2.1 (2019-04-07)
 

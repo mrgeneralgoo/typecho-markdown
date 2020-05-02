@@ -6,7 +6,7 @@ class ParsedownExtension extends Parsedown
 {
     protected $isTocEnable           = false;
     protected $findTocSyntaxRule     = '/^<p>\s*\[TOC\]\s*<\/p>$/m';
-    protected $originalBlockRuleList = ['$' => '/\${1,2}[^`]*\${1,2}/m'];
+    protected $originalBlockRuleList = ['$' => '/\${1,2}[^`]*?\${1,2}/m'];
     protected $absoluteUrl           = '';
 
     private $isMatureTocEnable = false; // for performance
