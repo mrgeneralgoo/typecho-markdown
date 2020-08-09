@@ -1,3 +1,9 @@
+## v1.3.0 (2020-08-09)
+
+Supported `mermaid` syntax for [Mermaid](https://mermaid-js.github.io/mermaid/#/) ([0ae86db](https://github.com/mrgeneralgoo/typecho-markdown/commit/0ae86dbcd865b2ee12858e436e1c86a3136085ed))
+
+Support mermaid and mathJax parsing becomes optional, parsing is enabled by default
+
 ## v1.2.3 (2020-05-02)
 
 Fix ([#13](https://github.com/mrgeneralgoo/typecho-markdown/issues/13))
@@ -35,6 +41,12 @@ Supported `[TOC]` syntax to generate table of contents ([ea851ae](https://github
 The first release
 
 ------
+
+## v1.3.0 (2020-08-09)
+
+支持使用 `mermaid` 语法来解析 [Mermaid](https://mermaid-js.github.io/mermaid/#/) ([0ae86db](https://github.com/mrgeneralgoo/typecho-markdown/commit/0ae86dbcd865b2ee12858e436e1c86a3136085ed))
+
+mermaid 和 mathJax 解析功能变成可选项，可以在配置面板控制，默认开启。
 
 ## v1.2.3 (2020-05-02)
 
