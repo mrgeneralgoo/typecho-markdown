@@ -10,7 +10,7 @@ class ParsedownExtension extends Parsedown
     protected $absoluteUrl           = '';
 
     private $isMatureTocEnable = false; // for performance
-    private $rawTocList        = []; // temp store
+    private $rawTocList        = [];    // temp store
 
     /**
      * Enable toc parse
@@ -90,7 +90,7 @@ class ParsedownExtension extends Parsedown
     protected function handleBefore($text)
     {
         // register elements handles
-        array_map(function ($originalBlockMark) {
+        array_map(function($originalBlockMark) {
 
             $this->addInlineElements($originalBlockMark, ['Original']);
 
@@ -201,6 +201,30 @@ class ParsedownExtension extends Parsedown
             'text'  => $text,
             'level' => str_replace('h', '', $block['element']['name']),
         ];
+
+        return $block;
+    }
+
+    /**
+     * Hook for mermaid
+     *
+     * @param $Line
+     *
+     * @return array
+     */
+    protected function blockFencedCode($Line)
+    {
+        $block = parent::blockFencedCode($Line);
+
+        if ('language-mermaid' === (isset($block['element']['element']['attributes']['class']) ? $block['element']['element']['attributes']['class'] : '')) {
+            $block['element'] = [
+                'name'       => 'div',
+                'attributes' => [
+                    'class' => 'mermaid',
+                ],
+                'element'    => [],
+            ];
+        }
 
         return $block;
     }
