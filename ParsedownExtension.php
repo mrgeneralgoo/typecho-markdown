@@ -4,13 +4,16 @@ require_once 'ParsedownExtra.php';
 
 class ParsedownExtension extends ParsedownExtra
 {
-    protected $isTocEnable           = false;
     protected $findTocSyntaxRule     = '/^<p>\s*\[TOC\]\s*<\/p>$/m';
     protected $originalBlockRuleList = ['$' => '/\${1,2}[^`]*?\${1,2}/m'];
     protected $absoluteUrl           = '';
 
     private $isMatureTocEnable = false; // for performance
     private $rawTocList        = [];    // temp store
+
+    public $isTocEnable   = false;
+    public $isNeedMermaid = false;
+    public $isNeedLaTex   = false;
 
     /**
      * Singleton Pattern
@@ -26,20 +29,6 @@ class ParsedownExtension extends ParsedownExtra
         $instance->initInstance();
 
         return $instance;
-    }
-
-    /**
-     * Enable toc parse
-     *
-     * @param  bool  $isTocEnable
-     *
-     * @return $this
-     */
-    public function setTocEnabled($isTocEnable)
-    {
-        $this->isTocEnable = $isTocEnable;
-
-        return $this;
     }
 
     /**
@@ -232,7 +221,8 @@ class ParsedownExtension extends ParsedownExtra
         $block = parent::blockFencedCode($Line);
 
         if ('language-mermaid' === (isset($block['element']['element']['attributes']['class']) ? $block['element']['element']['attributes']['class'] : '')) {
-            $block['element'] = [
+            $this->isNeedMermaid = true;
+            $block['element']    = [
                 'name'       => 'div',
                 'attributes' => [
                     'class' => 'mermaid',
@@ -261,6 +251,10 @@ class ParsedownExtension extends ParsedownExtra
 
         if (!isset($this->originalBlockRuleList[$originalBlockMark]) || !preg_match($this->originalBlockRuleList[$originalBlockMark], $excerpt['text'], $originalBlock) || empty($originalBlock[0])) {
             return null;
+        }
+
+        if ($originalBlockMark === '$') {
+            $this->isNeedLaTex = true;
         }
 
         return $this->inlineText($originalBlock[0]);
