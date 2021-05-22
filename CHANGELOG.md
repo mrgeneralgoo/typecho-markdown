@@ -1,3 +1,9 @@
+## v1.4.0 (2021-05-22)
+
+Support to load resources on demand to improve performance
+
+Supported footnote syntax，refer to [markdown-concise-grammar-manual - 13. footnote](https://www.chengxiaobai.cn/record/markdown-concise-grammar-manual.html#13.+注脚)
+
 ## v1.3.1 (2021-05-22)
 
 Fix ([#22](https://github.com/mrgeneralgoo/typecho-markdown/commit/6f56055b7ee3d3e98e04549cbc6c24cc09861a00))
@@ -10,7 +16,7 @@ Support [browser-level image lazy-loading]((https://developer.mozilla.org/en-US/
 
 Supported `mermaid` syntax for [Mermaid](https://mermaid-js.github.io/mermaid/#/)
 
-Support mermaid and mathJax parsing becomes optional, parsing is enabled by default
+Support Mermaid and MathJax parsing becomes optional, parsing is enabled by default
 
 ## v1.2.3 (2020-05-02)
 
@@ -49,8 +55,14 @@ Supported `[TOC]` syntax to generate table of contents
 The first release
 
 ------
+## v1.4.0 (2021-05-22)
+
+支持按需引入渲染资源，无需再担心引入冗余资源，提升 MathJax 和 Mermaid 页面体验与性能
+
+支持注脚语法，请参考[考语法手册 - 13. 注脚](https://www.chengxiaobai.cn/record/markdown-concise-grammar-manual.html#13.+注脚)
 
 ## v1.3.1 (2021-05-22)
+
 修复目录重复导致的目录渲染丢失问题 ([#22](https://github.com/mrgeneralgoo/typecho-markdown/issues/22))
 
 兼容 PHP8
@@ -61,11 +73,11 @@ The first release
 
 支持使用 `mermaid` 语法来解析 [Mermaid](https://mermaid-js.github.io/mermaid/#/)
 
-mermaid 和 mathJax 解析功能变成可选项，可以在配置面板控制，默认开启。
+Mermaid and MathJax 解析功能变成可选项，可以在配置面板控制，默认开启。
 
 ## v1.2.3 (2020-05-02)
 
-修复 `$$` 和 markdown 语法共存在一段有时会导致 markdown 不解析问题 ([#13](https://github.com/mrgeneralgoo/typecho-markdown/issues/13))
+修复 `$$` 和 Markdown 语法共存在一段有时会导致 markdown 不解析问题 ([#13](https://github.com/mrgeneralgoo/typecho-markdown/issues/13))
 
 ## v1.2.2 (2019-06-09)
 

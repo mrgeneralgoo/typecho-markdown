@@ -2,7 +2,7 @@ Markdown Plugin for Typecho
 =========================
 
 This is a markdown parse plugin. 
-It uses [Parsedown](https://github.com/erusev/parsedown) to replace Typecho's own markdown parse library, and supports `[TOC]` syntax to generate table of contents, supports `$` and `$$` syntax for [MathJax](https://www.mathjax.org), supports `mermaid` syntax for [Mermaid](https://mermaid-js.github.io/mermaid/#/).
+It uses [Parsedown](https://github.com/erusev/parsedown) to replace Typecho's own markdown parse library, and supports `[TOC]` syntax to generate table of contents, supports `$` and `$$` syntax for [MathJax](https://www.mathjax.org), supports `mermaid` syntax for [Mermaid](https://mermaid-js.github.io/mermaid/#/). All resources are loaded on demand, doing more with less.
 
 ## Installation
 
@@ -24,7 +24,7 @@ https://www.chengxiaobai.cn/php/markdown-parser-library.html
 
 ------
 
-这是一个 Markdown 解析插件，用 [Parsedown](https://github.com/erusev/parsedown) 替换 Typecho 自带的 Markdown 解析库，并额外支持 `[TOC]` 语法来生成目录，同时支持 [MathJax](https://www.mathjax.org) 来渲染数学公式，也支持 [Mermaid](https://mermaid-js.github.io/mermaid/#/) 生成各种图表。
+这是一个 Markdown 解析插件，用 [Parsedown](https://github.com/erusev/parsedown) 替换 Typecho 自带的 Markdown 解析库，并额外支持 `[TOC]` 语法来生成目录，同时支持 [MathJax](https://www.mathjax.org) 来渲染数学公式，也支持 [Mermaid](https://mermaid-js.github.io/mermaid/#/) 生成各种图表。根据实际渲染需求，智能识别是否加载渲染资源，无需再担心引入冗余资源。
 
 ## 安装
 
