@@ -3,8 +3,8 @@
 /**
  * 更快、更全的 Markdown 解析插件
  *
- * @package MarkdownParse
  * @author  mrgeneral
+ * @package MarkdownParse
  * @version 1.3.0
  * @link    https://www.chengxiaobai.cn
  */
@@ -48,9 +48,9 @@ class MarkdownParse_Plugin implements Typecho_Plugin_Interface
     public static function parse($text)
     {
         return ParsedownExtension::instance()
-            ->setBreaksEnabled(true)
-            ->setTocEnabled((bool)Helper::options()->plugin('MarkdownParse')->is_available_toc)
-            ->text($text);
+                                 ->setBreaksEnabled(true)
+                                 ->setTocEnabled((bool)Helper::options()->plugin('MarkdownParse')->is_available_toc)
+                                 ->text($text);
     }
 
     public static function resourceLink()
