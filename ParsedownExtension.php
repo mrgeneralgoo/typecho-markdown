@@ -134,8 +134,8 @@ class ParsedownExtension extends Parsedown
         $tocMarkdownContent = '';
         $topHeadLevel       = min(array_column($this->rawTocList, 'level'));
 
-        foreach ($this->rawTocList as $id => $tocItem) {
-            $tocMarkdownContent .= sprintf('%s- [%s](%s#%s)' . PHP_EOL, str_repeat('  ', $tocItem['level'] - $topHeadLevel), $this->line($tocItem['text']), $this->absoluteUrl, $id);
+        foreach ($this->rawTocList as $tocItem) {
+            $tocMarkdownContent .= sprintf('%s- [%s](%s#%s)' . PHP_EOL, str_repeat('  ', $tocItem['level'] - $topHeadLevel), $this->line($tocItem['text']), $this->absoluteUrl, $tocItem['id']);
         }
 
         return parent::text($tocMarkdownContent);
@@ -197,7 +197,8 @@ class ParsedownExtension extends Parsedown
             'id' => $id,
         ];
 
-        $this->rawTocList[$id] = [
+        $this->rawTocList[] = [
+            'id'    => $id,
             'text'  => $text,
             'level' => str_replace('h', '', $block['element']['name']),
         ];
