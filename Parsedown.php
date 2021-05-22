@@ -1271,6 +1271,7 @@ class Parsedown
                 'attributes' => [
                     'src' => $Link['element']['attributes']['href'],
                     'alt' => $Link['element']['handler']['argument'],
+                    'loading' => 'lazy',
                 ],
                 'autobreak'  => true,
             ],
