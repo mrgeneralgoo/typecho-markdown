@@ -223,7 +223,9 @@ class ParsedownExtension extends Parsedown
                 'attributes' => [
                     'class' => 'mermaid',
                 ],
-                'element'    => [],
+                'element'    => [
+                    'text' => '',
+                ],
             ];
         }
 
