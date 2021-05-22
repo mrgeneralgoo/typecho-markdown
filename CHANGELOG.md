@@ -1,6 +1,14 @@
+## v1.3.1 (2021-05-22)
+
+Fix ([#22](https://github.com/mrgeneralgoo/typecho-markdown/commit/6f56055b7ee3d3e98e04549cbc6c24cc09861a00))
+
+Compatible with PHP8
+
+Support [browser-level image lazy-loading]((https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading))
+
 ## v1.3.0 (2020-08-09)
 
-Supported `mermaid` syntax for [Mermaid](https://mermaid-js.github.io/mermaid/#/) ([0ae86db](https://github.com/mrgeneralgoo/typecho-markdown/commit/0ae86dbcd865b2ee12858e436e1c86a3136085ed))
+Supported `mermaid` syntax for [Mermaid](https://mermaid-js.github.io/mermaid/#/)
 
 Support mermaid and mathJax parsing becomes optional, parsing is enabled by default
 
@@ -18,7 +26,7 @@ Support  original text output when no  `[TOC]` syntax is detected ([#9](https://
 
 ## v1.2.0 (2019-03-13)
 
-Supported `$` and `$$` syntax for [MathJax](https://www.mathjax.org) ([a26a3dd](https://github.com/mrgeneralgoo/typecho-markdown/commit/a26a3dd684274817140ac3e1683779f5cfceb877))
+Supported `$` and `$$` syntax for [MathJax](https://www.mathjax.org)
 
 Added new functions makes it easier to expand its capabilities
 
@@ -28,13 +36,13 @@ Fixed duplicate builds table of contents ([#5](https://github.com/mrgeneralgoo/t
 
 ## v1.1.0 (2018-08-25)
 
-Optimized  table of contents parsing algorithm ([ba03a36](https://github.com/mrgeneralgoo/typecho-markdown/commit/ba03a3635624b45fe7b37fdd5b56926823c6d625))
+Optimized  table of contents parsing algorithm
 
 Remove extra code to improve performance
 
 ## v1.0.1 (2017-12-26)
 
-Supported `[TOC]` syntax to generate table of contents ([ea851ae](https://github.com/mrgeneralgoo/typecho-markdown/commit/ea851aed059ea7310219bfe0612a2a51f50f97d6))
+Supported `[TOC]` syntax to generate table of contents
 
 ## v1.0.0 (2017-12-02)
 
@@ -42,9 +50,16 @@ The first release
 
 ------
 
+## v1.3.1 (2021-05-22)
+修复目录重复导致的目录渲染丢失问题 ([#22](https://github.com/mrgeneralgoo/typecho-markdown/issues/22))
+
+兼容 PHP8
+
+支持[浏览器原生图片懒加载特性](https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading)
+
 ## v1.3.0 (2020-08-09)
 
-支持使用 `mermaid` 语法来解析 [Mermaid](https://mermaid-js.github.io/mermaid/#/) ([0ae86db](https://github.com/mrgeneralgoo/typecho-markdown/commit/0ae86dbcd865b2ee12858e436e1c86a3136085ed))
+支持使用 `mermaid` 语法来解析 [Mermaid](https://mermaid-js.github.io/mermaid/#/)
 
 mermaid 和 mathJax 解析功能变成可选项，可以在配置面板控制，默认开启。
 
@@ -62,7 +77,7 @@ mermaid 和 mathJax 解析功能变成可选项，可以在配置面板控制，
 
 ## v1.2.0 (2019-03-13)
 
-支持 [MathJax](https://www.mathjax.org) 的 `$` 和 `$$` 语法来渲染数学公式 ([a26a3dd](https://github.com/mrgeneralgoo/typecho-markdown/commit/a26a3dd684274817140ac3e1683779f5cfceb877))
+支持 [MathJax](https://www.mathjax.org) 的 `$` 和 `$$` 语法来渲染数学公式
 
 新增函数使得拓展其功能更加简单
 
@@ -72,13 +87,13 @@ mermaid 和 mathJax 解析功能变成可选项，可以在配置面板控制，
 
 ## v1.1.0 (2018-08-25)
 
-优化目录解析算法，避免乱码情况 ([ba03a36](https://github.com/mrgeneralgoo/typecho-markdown/commit/ba03a3635624b45fe7b37fdd5b56926823c6d625))
+优化目录解析算法，避免乱码情况
 
 精简代码，提升性能
 
 ## v1.0.1 (2017-12-26)
 
-支持`[TOC]` 语法生成目录 ([ea851ae](https://github.com/mrgeneralgoo/typecho-markdown/commit/ea851aed059ea7310219bfe0612a2a51f50f97d6))
+支持`[TOC]` 语法生成目录
 
 ## v1.0.0 (2017-12-02)
 
