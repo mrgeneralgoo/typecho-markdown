@@ -1,8 +1,8 @@
 <?php
 
-require_once 'Parsedown.php';
+require_once 'ParsedownExtra.php';
 
-class ParsedownExtension extends Parsedown
+class ParsedownExtension extends ParsedownExtra
 {
     protected $isTocEnable           = false;
     protected $findTocSyntaxRule     = '/^<p>\s*\[TOC\]\s*<\/p>$/m';
@@ -11,6 +11,22 @@ class ParsedownExtension extends Parsedown
 
     private $isMatureTocEnable = false; // for performance
     private $rawTocList        = [];    // temp store
+
+    /**
+     * Singleton Pattern
+     *
+     * @param  string  $name
+     *
+     * @return ParsedownExtension
+     */
+    public static function instance($name = 'default')
+    {
+        $instance = parent::instance($name);
+
+        $instance->initInstance();
+
+        return $instance;
+    }
 
     /**
      * Enable toc parse

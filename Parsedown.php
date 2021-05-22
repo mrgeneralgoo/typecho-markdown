@@ -101,62 +101,59 @@ class Parsedown
 
     protected $strictMode;
 
-    protected $safeLinksWhitelist
-        = [
-            'http://',
-            'https://',
-            'ftp://',
-            'ftps://',
-            'mailto:',
-            'tel:',
-            'data:image/png;base64,',
-            'data:image/gif;base64,',
-            'data:image/jpeg;base64,',
-            'irc:',
-            'ircs:',
-            'git:',
-            'ssh:',
-            'news:',
-            'steam:',
-        ];
+    protected $safeLinksWhitelist = [
+        'http://',
+        'https://',
+        'ftp://',
+        'ftps://',
+        'mailto:',
+        'tel:',
+        'data:image/png;base64,',
+        'data:image/gif;base64,',
+        'data:image/jpeg;base64,',
+        'irc:',
+        'ircs:',
+        'git:',
+        'ssh:',
+        'news:',
+        'steam:',
+    ];
 
     #
     # Lines
     #
 
-    protected $BlockTypes
-        = [
-            '#' => ['Header'],
-            '*' => ['Rule', 'List'],
-            '+' => ['List'],
-            '-' => ['SetextHeader', 'Table', 'Rule', 'List'],
-            '0' => ['List'],
-            '1' => ['List'],
-            '2' => ['List'],
-            '3' => ['List'],
-            '4' => ['List'],
-            '5' => ['List'],
-            '6' => ['List'],
-            '7' => ['List'],
-            '8' => ['List'],
-            '9' => ['List'],
-            ':' => ['Table'],
-            '<' => ['Comment', 'Markup'],
-            '=' => ['SetextHeader'],
-            '>' => ['Quote'],
-            '[' => ['Reference'],
-            '_' => ['Rule'],
-            '`' => ['FencedCode'],
-            '|' => ['Table'],
-            '~' => ['FencedCode'],
-        ];
+    protected $BlockTypes = [
+        '#' => ['Header'],
+        '*' => ['Rule', 'List'],
+        '+' => ['List'],
+        '-' => ['SetextHeader', 'Table', 'Rule', 'List'],
+        '0' => ['List'],
+        '1' => ['List'],
+        '2' => ['List'],
+        '3' => ['List'],
+        '4' => ['List'],
+        '5' => ['List'],
+        '6' => ['List'],
+        '7' => ['List'],
+        '8' => ['List'],
+        '9' => ['List'],
+        ':' => ['Table'],
+        '<' => ['Comment', 'Markup'],
+        '=' => ['SetextHeader'],
+        '>' => ['Quote'],
+        '[' => ['Reference'],
+        '_' => ['Rule'],
+        '`' => ['FencedCode'],
+        '|' => ['Table'],
+        '~' => ['FencedCode'],
+    ];
 
     # ~
 
-    protected $unmarkedBlockTypes
-        = [
-            'Code',
-        ];
+    protected $unmarkedBlockTypes = [
+        'Code',
+    ];
 
     #
     # Blocks
@@ -1023,19 +1020,18 @@ class Parsedown
     # Inline Elements
     #
 
-    protected $InlineTypes
-        = [
-            '!'  => ['Image'],
-            '&'  => ['SpecialCharacter'],
-            '*'  => ['Emphasis'],
-            ':'  => ['Url'],
-            '<'  => ['UrlTag', 'EmailTag', 'Markup'],
-            '['  => ['Link'],
-            '_'  => ['Emphasis'],
-            '`'  => ['Code'],
-            '~'  => ['Strikethrough'],
-            '\\' => ['EscapeSequence'],
-        ];
+    protected $InlineTypes = [
+        '!'  => ['Image'],
+        '&'  => ['SpecialCharacter'],
+        '*'  => ['Emphasis'],
+        ':'  => ['Url'],
+        '<'  => ['UrlTag', 'EmailTag', 'Markup'],
+        '['  => ['Link'],
+        '_'  => ['Emphasis'],
+        '`'  => ['Code'],
+        '~'  => ['Strikethrough'],
+        '\\' => ['EscapeSequence'],
+    ];
 
     # ~
 
@@ -1269,8 +1265,8 @@ class Parsedown
             'element' => [
                 'name'       => 'img',
                 'attributes' => [
-                    'src' => $Link['element']['attributes']['href'],
-                    'alt' => $Link['element']['handler']['argument'],
+                    'src'     => $Link['element']['attributes']['href'],
+                    'alt'     => $Link['element']['handler']['argument'],
                     'loading' => 'lazy',
                 ],
                 'autobreak'  => true,
@@ -1791,40 +1787,35 @@ class Parsedown
     #
     # Read-Only
 
-    protected $specialCharacters
-        = [
-            '\\', '`', '*', '_', '{', '}', '[', ']', '(', ')', '>', '#', '+', '-', '.', '!', '|', '~',
-        ];
+    protected $specialCharacters = [
+        '\\', '`', '*', '_', '{', '}', '[', ']', '(', ')', '>', '#', '+', '-', '.', '!', '|', '~',
+    ];
 
-    protected $StrongRegex
-        = [
-            '*' => '/^[*]{2}((?:\\\\\*|[^*]|[*][^*]*+[*])+?)[*]{2}(?![*])/s',
-            '_' => '/^__((?:\\\\_|[^_]|_[^_]*+_)+?)__(?!_)/us',
-        ];
+    protected $StrongRegex = [
+        '*' => '/^[*]{2}((?:\\\\\*|[^*]|[*][^*]*+[*])+?)[*]{2}(?![*])/s',
+        '_' => '/^__((?:\\\\_|[^_]|_[^_]*+_)+?)__(?!_)/us',
+    ];
 
-    protected $EmRegex
-        = [
-            '*' => '/^[*]((?:\\\\\*|[^*]|[*][*][^*]+?[*][*])+?)[*](?![*])/s',
-            '_' => '/^_((?:\\\\_|[^_]|__[^_]*__)+?)_(?!_)\b/us',
-        ];
+    protected $EmRegex = [
+        '*' => '/^[*]((?:\\\\\*|[^*]|[*][*][^*]+?[*][*])+?)[*](?![*])/s',
+        '_' => '/^_((?:\\\\_|[^_]|__[^_]*__)+?)_(?!_)\b/us',
+    ];
 
     protected $regexHtmlAttribute = '[a-zA-Z_:][\w:.-]*+(?:\s*+=\s*+(?:[^"\'=<>`\s]+|"[^"]*+"|\'[^\']*+\'))?+';
 
-    protected $voidElements
-        = [
-            'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source',
-        ];
+    protected $voidElements = [
+        'area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source',
+    ];
 
-    protected $textLevelElements
-        = [
-            'a', 'br', 'bdo', 'abbr', 'blink', 'nextid', 'acronym', 'basefont',
-            'b', 'em', 'big', 'cite', 'small', 'spacer', 'listing',
-            'i', 'rp', 'del', 'code', 'strike', 'marquee',
-            'q', 'rt', 'ins', 'font', 'strong',
-            's', 'tt', 'kbd', 'mark',
-            'u', 'xm', 'sub', 'nobr',
-            'sup', 'ruby',
-            'var', 'span',
-            'wbr', 'time',
-        ];
+    protected $textLevelElements = [
+        'a', 'br', 'bdo', 'abbr', 'blink', 'nextid', 'acronym', 'basefont',
+        'b', 'em', 'big', 'cite', 'small', 'spacer', 'listing',
+        'i', 'rp', 'del', 'code', 'strike', 'marquee',
+        'q', 'rt', 'ins', 'font', 'strong',
+        's', 'tt', 'kbd', 'mark',
+        'u', 'xm', 'sub', 'nobr',
+        'sup', 'ruby',
+        'var', 'span',
+        'wbr', 'time',
+    ];
 }
