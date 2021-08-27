@@ -5,7 +5,7 @@
  *
  * @author  mrgeneral
  * @package MarkdownParse
- * @version 1.4.1
+ * @version 1.4.2
  * @link    https://www.chengxiaobai.cn
  */
 
@@ -13,6 +13,10 @@ require_once 'ParsedownExtension.php';
 
 class MarkdownParse_Plugin implements Typecho_Plugin_Interface
 {
+    const RADIO_VALUE_DISABLE = 0;
+    const RADIO_VALUE_AUTO    = 1;
+    const RADIO_VALUE_FORCE   = 2;
+
     public static function activate()
     {
         Typecho_Plugin::factory('Widget_Abstract_Contents')->markdown = [__CLASS__, 'parse'];
@@ -27,16 +31,16 @@ class MarkdownParse_Plugin implements Typecho_Plugin_Interface
 
     public static function config(Typecho_Widget_Helper_Form $form)
     {
-        $elementToc = new Typecho_Widget_Helper_Form_Element_Radio('is_available_toc', [0 => _t('不解析'), 1 => _t('解析')], 1, _t('是否解析 [TOC] 语法（符合 HTML 规范，无需 JS 支持）'), _t('开会后支持 [TOC] 语法来生成目录'));
+        $elementToc = new Typecho_Widget_Helper_Form_Element_Radio('is_available_toc', [self::RADIO_VALUE_DISABLE => _t('不解析'), self::RADIO_VALUE_AUTO => _t('解析')], self::RADIO_VALUE_AUTO, _t('是否解析 [TOC] 语法（符合 HTML 规范，无需 JS 支持）'), _t('开会后支持 [TOC] 语法来生成目录'));
         $form->addInput($elementToc);
 
-        $elementMermaid = new Typecho_Widget_Helper_Form_Element_Radio('is_available_mermaid', [0 => _t('不开启'), 1 => _t('开启')], 1, _t('是否开启 Mermaid 支持（自动识别，按需渲染，无需担心引入冗余资源）'), _t('开启后支持解析并渲染 <a href="https://mermaid-js.github.io/mermaid/#/">Mermaid</a>'));
+        $elementMermaid = new Typecho_Widget_Helper_Form_Element_Radio('is_available_mermaid', [self::RADIO_VALUE_DISABLE => _t('不开启'), self::RADIO_VALUE_AUTO => _t('开启（按需加载）'), self::RADIO_VALUE_FORCE => _t('开启（每次加载，pjax 主题建议选择此选项）')], self::RADIO_VALUE_AUTO, _t('是否开启 Mermaid 支持（支持自动识别，按需渲染，无需担心引入冗余资源）'), _t('开启后支持解析并渲染 <a href="https://mermaid-js.github.io/mermaid/#/">Mermaid</a>'));
         $form->addInput($elementMermaid);
 
-        $elementMathJax = new Typecho_Widget_Helper_Form_Element_Radio('is_available_mathjax', [0 => _t('不开启'), 1 => _t('开启')], 1, _t('是否开启 MathJax 支持（自动识别，按需渲染，无需担心引入冗余资源）'), _t('开启后支持解析并渲染 <a href="https://www.mathjax.org/">MathJax</a>'));
+        $elementMathJax = new Typecho_Widget_Helper_Form_Element_Radio('is_available_mathjax', [self::RADIO_VALUE_DISABLE => _t('不开启'), self::RADIO_VALUE_AUTO => _t('开启（按需加载）'), self::RADIO_VALUE_FORCE => _t('开启（每次加载，pjax 主题建议选择此选项）')], self::RADIO_VALUE_AUTO, _t('是否开启 MathJax 支持（支持自动识别，按需渲染，无需担心引入冗余资源）'), _t('开启后支持解析并渲染 <a href="https://www.mathjax.org/">MathJax</a>'));
         $form->addInput($elementMathJax);
 
-        $elementHelper = new Typecho_Widget_Helper_Form_Element_Radio('show_help_info', [], 0, _t('<a href="https://www.chengxiaobai.cn/php/markdown-parser-library.html/">点击查看更新信息</a>'), _t('<a href="https://www.chengxiaobai.cn/record/markdown-concise-grammar-manual.html/">点击查看语法手册</a>'));
+        $elementHelper = new Typecho_Widget_Helper_Form_Element_Radio('show_help_info', [], self::RADIO_VALUE_DISABLE, _t('<a href="https://www.chengxiaobai.cn/php/markdown-parser-library.html/">点击查看更新信息</a>'), _t('<a href="https://www.chengxiaobai.cn/record/markdown-concise-grammar-manual.html/">点击查看语法手册</a>'));
         $form->addInput($elementHelper);
     }
 
@@ -55,9 +59,11 @@ class MarkdownParse_Plugin implements Typecho_Plugin_Interface
 
     public static function resourceLink()
     {
+        $configMermaid      = (int)Helper::options()->plugin('MarkdownParse')->is_available_mermaid;
+        $configLaTex        = (int)Helper::options()->plugin('MarkdownParse')->is_available_mathjax;
         $markdownParser     = ParsedownExtension::instance();
-        $isAvailableMermaid = $markdownParser->isNeedMermaid && (bool)Helper::options()->plugin('MarkdownParse')->is_available_mermaid;
-        $isAvailableMathjax = $markdownParser->isNeedLaTex && (bool)Helper::options()->plugin('MarkdownParse')->is_available_mathjax;
+        $isAvailableMermaid = $configMermaid === self::RADIO_VALUE_FORCE || ($markdownParser->isNeedMermaid && $configMermaid === self::RADIO_VALUE_AUTO);
+        $isAvailableMathjax = $configLaTex === self::RADIO_VALUE_FORCE || ($markdownParser->isNeedLaTex && $configLaTex === self::RADIO_VALUE_AUTO);
 
         $resourceContent = '';
 
