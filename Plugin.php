@@ -17,6 +17,22 @@ class MarkdownParse_Plugin implements Typecho_Plugin_Interface
     const RADIO_VALUE_AUTO    = 1;
     const RADIO_VALUE_FORCE   = 2;
 
+    const CDN_SOURCE_DEFAULT = 'jsDelivr';
+    const CDN_SOURCE_MERMAID = [
+        'jsDelivr'  => 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.min.js',
+        'cdnjs'     => 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.1.1/mermaid.min.js',
+        'bytedance' => 'https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-y/mermaid/8.14.0/mermaid.min.js',
+        'baomitu'   => 'https://lib.baomitu.com/mermaid/latest/mermaid.min.js',
+        'bootcdn'   => 'https://cdn.bootcdn.net/ajax/libs/mermaid/9.1.1/mermaid.min.js'
+    ];
+    const CDN_SOURCE_MATHJAX = [
+        'jsDelivr'  => 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.min.js',
+        'cdnjs'     => 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.min.js',
+        'bytedance' => 'https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-y/mathjax/3.2.0/es5/tex-mml-chtml.min.js',
+        'baomitu'   => 'https://lib.baomitu.com/mathjax/latest/es5/tex-mml-chtml.min.js',
+        'bootcdn'   => 'https://cdn.bootcdn.net/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.min.js'
+    ];
+
     public static function activate()
     {
         Typecho_Plugin::factory('Widget_Abstract_Contents')->markdown = [__CLASS__, 'parse'];
@@ -40,6 +56,9 @@ class MarkdownParse_Plugin implements Typecho_Plugin_Interface
         $elementMathJax = new Typecho_Widget_Helper_Form_Element_Radio('is_available_mathjax', [self::RADIO_VALUE_DISABLE => _t('不开启'), self::RADIO_VALUE_AUTO => _t('开启（按需加载）'), self::RADIO_VALUE_FORCE => _t('开启（每次加载，pjax 主题建议选择此选项）')], self::RADIO_VALUE_AUTO, _t('是否开启 MathJax 支持（支持自动识别，按需渲染，无需担心引入冗余资源）'), _t('开启后支持解析并渲染 <a href="https://www.mathjax.org/">MathJax</a>'));
         $form->addInput($elementMathJax);
 
+        $elementCDNSource = new Typecho_Widget_Helper_Form_Element_Radio('cdn_source', [array_combine(array_keys(self::CDN_SOURCE_MERMAID), array_map('_t', array_keys(self::CDN_SOURCE_MERMAID)))], self::CDN_SOURCE_DEFAULT);
+        $form->addInput($elementCDNSource);
+
         $elementHelper = new Typecho_Widget_Helper_Form_Element_Radio('show_help_info', [], self::RADIO_VALUE_DISABLE, _t('<a href="https://www.chengxiaobai.cn/php/markdown-parser-library.html/">点击查看更新信息</a>'), _t('<a href="https://www.chengxiaobai.cn/record/markdown-concise-grammar-manual.html/">点击查看语法手册</a>'));
         $form->addInput($elementHelper);
     }
@@ -59,8 +78,9 @@ class MarkdownParse_Plugin implements Typecho_Plugin_Interface
 
     public static function resourceLink()
     {
-        $configMermaid      = (int)Helper::options()->plugin('MarkdownParse')->is_available_mermaid;
-        $configLaTex        = (int)Helper::options()->plugin('MarkdownParse')->is_available_mathjax;
+        $configMermaid      = (int) Helper::options()->plugin('MarkdownParse')->is_available_mermaid;
+        $configLaTex        = (int) Helper::options()->plugin('MarkdownParse')->is_available_mathjax;
+        $configCDN          = (string) Helper::options()->plugin('MarkdownParse')->cdn_source;
         $markdownParser     = ParsedownExtension::instance();
         $isAvailableMermaid = $configMermaid === self::RADIO_VALUE_FORCE || ($markdownParser->isNeedMermaid && $configMermaid === self::RADIO_VALUE_AUTO);
         $isAvailableMathjax = $configLaTex === self::RADIO_VALUE_FORCE || ($markdownParser->isNeedLaTex && $configLaTex === self::RADIO_VALUE_AUTO);
@@ -68,13 +88,13 @@ class MarkdownParse_Plugin implements Typecho_Plugin_Interface
         $resourceContent = '';
 
         if ($isAvailableMermaid) {
-            $resourceContent .= '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.14.0/mermaid.min.js"></script>';
+            $resourceContent .= sprintf('<script type="text/javascript" src="%s"></script>', !empty(self::CDN_SOURCE_MERMAID[$configCDN]) ? self::CDN_SOURCE_MERMAID[$configCDN] : self::CDN_SOURCE_MERMAID[self::CDN_SOURCE_DEFAULT]);
             $resourceContent .= '<script type="text/javascript">(function(){mermaid.initialize({startOnLoad:true})})();</script>';
         }
 
         if ($isAvailableMathjax) {
             $resourceContent .= '<script type="text/javascript">(function(){MathJax={tex:{inlineMath:[[\'$\',\'$\'],[\'\\\\(\',\'\\\\)\']]}}})();</script>';
-            $resourceContent .= '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.min.js"></script>';
+            $resourceContent .= sprintf('<script type="text/javascript" src="%s"></script>', !empty(self::CDN_SOURCE_MATHJAX[$configCDN]) ? self::CDN_SOURCE_MATHJAX[$configCDN] : self::CDN_SOURCE_MATHJAX[self::CDN_SOURCE_DEFAULT]);
         }
 
         echo $resourceContent;
