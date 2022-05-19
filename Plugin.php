@@ -56,7 +56,7 @@ class MarkdownParse_Plugin implements Typecho_Plugin_Interface
         $elementMathJax = new Typecho_Widget_Helper_Form_Element_Radio('is_available_mathjax', [self::RADIO_VALUE_DISABLE => _t('不开启'), self::RADIO_VALUE_AUTO => _t('开启（按需加载）'), self::RADIO_VALUE_FORCE => _t('开启（每次加载，pjax 主题建议选择此选项）')], self::RADIO_VALUE_AUTO, _t('是否开启 MathJax 支持（支持自动识别，按需渲染，无需担心引入冗余资源）'), _t('开启后支持解析并渲染 <a href="https://www.mathjax.org/">MathJax</a>'));
         $form->addInput($elementMathJax);
 
-        $elementCDNSource = new Typecho_Widget_Helper_Form_Element_Radio('cdn_source', [array_combine(array_keys(self::CDN_SOURCE_MERMAID), array_map('_t', array_keys(self::CDN_SOURCE_MERMAID)))], self::CDN_SOURCE_DEFAULT);
+        $elementCDNSource = new Typecho_Widget_Helper_Form_Element_Radio('cdn_source', array_combine(array_keys(self::CDN_SOURCE_MERMAID), array_map('_t', array_keys(self::CDN_SOURCE_MERMAID))), self::CDN_SOURCE_DEFAULT);
         $form->addInput($elementCDNSource);
 
         $elementHelper = new Typecho_Widget_Helper_Form_Element_Radio('show_help_info', [], self::RADIO_VALUE_DISABLE, _t('<a href="https://www.chengxiaobai.cn/php/markdown-parser-library.html/">点击查看更新信息</a>'), _t('<a href="https://www.chengxiaobai.cn/record/markdown-concise-grammar-manual.html/">点击查看语法手册</a>'));
