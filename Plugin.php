@@ -5,7 +5,7 @@
  *
  * @author  mrgeneral
  * @package MarkdownParse
- * @version 1.4.3
+ * @version 1.4.4
  * @link    https://www.chengxiaobai.cn
  */
 
@@ -88,13 +88,13 @@ class MarkdownParse_Plugin implements Typecho_Plugin_Interface
         $resourceContent = '';
 
         if ($isAvailableMermaid) {
-            $resourceContent .= sprintf('<script type="text/javascript" src="%s"></script>', !empty(self::CDN_SOURCE_MERMAID[$configCDN]) ? self::CDN_SOURCE_MERMAID[$configCDN] : self::CDN_SOURCE_MERMAID[self::CDN_SOURCE_DEFAULT]);
-            $resourceContent .= '<script type="text/javascript">(function(){mermaid.initialize({startOnLoad:true})})();</script>';
+            $resourceContent .= '<script type="text/javascript">function initMermaid(){mermaid.initialize({startOnLoad:true})}</script>';
+            $resourceContent .= sprintf('<script type="text/javascript" src="%s" async onload="initMermaid()"></script>', !empty(self::CDN_SOURCE_MERMAID[$configCDN]) ? self::CDN_SOURCE_MERMAID[$configCDN] : self::CDN_SOURCE_MERMAID[self::CDN_SOURCE_DEFAULT]);
         }
 
         if ($isAvailableMathjax) {
             $resourceContent .= '<script type="text/javascript">(function(){MathJax={tex:{inlineMath:[[\'$\',\'$\'],[\'\\\\(\',\'\\\\)\']]}}})();</script>';
-            $resourceContent .= sprintf('<script type="text/javascript" src="%s"></script>', !empty(self::CDN_SOURCE_MATHJAX[$configCDN]) ? self::CDN_SOURCE_MATHJAX[$configCDN] : self::CDN_SOURCE_MATHJAX[self::CDN_SOURCE_DEFAULT]);
+            $resourceContent .= sprintf('<script type="text/javascript" src="%s" async></script>', !empty(self::CDN_SOURCE_MATHJAX[$configCDN]) ? self::CDN_SOURCE_MATHJAX[$configCDN] : self::CDN_SOURCE_MATHJAX[self::CDN_SOURCE_DEFAULT]);
         }
 
         echo $resourceContent;
