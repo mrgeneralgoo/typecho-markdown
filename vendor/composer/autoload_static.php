@@ -12,9 +12,14 @@ class ComposerStaticInit497de8f792ecf27d2c5470322e712286
     );
 
     public static $prefixLengthsPsr4 = array (
+        'W' => 
+        array (
+            'Wnx\\CommonmarkMarkExtension\\' => 28,
+        ),
         'S' => 
         array (
             'Symfony\\Polyfill\\Php80\\' => 23,
+            'Samwilson\\CommonMarkLatex\\' => 26,
         ),
         'P' => 
         array (
@@ -32,9 +37,17 @@ class ComposerStaticInit497de8f792ecf27d2c5470322e712286
     );
 
     public static $prefixDirsPsr4 = array (
+        'Wnx\\CommonmarkMarkExtension\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/wnx/commonmark-mark-extension/src',
+        ),
         'Symfony\\Polyfill\\Php80\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
+        ),
+        'Samwilson\\CommonMarkLatex\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/samwilson/commonmark-latex/src',
         ),
         'Psr\\EventDispatcher\\' => 
         array (

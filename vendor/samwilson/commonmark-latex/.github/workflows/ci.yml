@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  build:
+
+    strategy:
+      matrix:
+        php: [ '7.4', '8.0', '8.1', '8.2' ]
+
+    runs-on: ubuntu-latest
+
+    name: PHP ${{ matrix.php }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{matrix.php}}
+
+    - name: Set up TeXLive
+      uses: teatimeguest/setup-texlive-action@v3
+      with:
+        packages: scheme-basic latexmk listings float etoolbox footmisc
+
+    - name: Install
+      run: composer install
+
+    - name: Test
+      run: composer test

@@ -1,0 +1,7 @@
+composer.lock
+.phpcs-cache
+.phpunit.result.cache
+build/
+vendor/
+tests/data/CompileTest*
+
