@@ -1,0 +1,20 @@
+version: '3.7'
+
+services:
+  typecho:
+    image: joyqi/typecho:nightly-php8.2-apache
+    container_name: TYPECHO
+    restart: always
+    environment:
+      - TIMEZONE=Asia/Shanghai
+      - TYPECHO_INSTALL=1
+      - TYPECHO_DB_ADAPTER=Pdo_SQLite
+      - TYPECHO_SITE_URL=http://127.0.0.1:8080
+      - TYPECHO_USER_NAME=typecho
+      - TYPECHO_USER_PASSWORD=V40yx1iqybZgOWsxq6dtEed45Z1Vr1zl
+      - TYPECHO_USER_MAIL=typecho@localhost.local
+    ports:
+      - 8080:80
+    volumes:
+      - ./usr:/app/usr
+      # - ../.:/app/usr/plugins/MarkdownParse
