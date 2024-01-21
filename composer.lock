@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7852e67ce779c9b4da24a67451d4d513",
+    "content-hash": "f8327090218c5ca44b25275e92292046",
     "packages": [
         {
             "name": "dflydev/dot-access-data",
@@ -466,6 +466,57 @@
                 "source": "https://github.com/php-fig/event-dispatcher/tree/1.0.0"
             },
             "time": "2019-01-08T18:20:26+00:00"
+        },
+        {
+            "name": "simonvomeyser/commonmark-ext-lazy-image",
+            "version": "v2.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/simonvomeyser/commonmark-ext-lazy-image.git",
+                "reference": "38c2b017ee8af71ca2cf5e052e0719ee51847c5e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/simonvomeyser/commonmark-ext-lazy-image/zipball/38c2b017ee8af71ca2cf5e052e0719ee51847c5e",
+                "reference": "38c2b017ee8af71ca2cf5e052e0719ee51847c5e",
+                "shasum": ""
+            },
+            "require": {
+                "league/commonmark": "^2.0",
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.0"
+            },
+            "type": "commonmark-extension",
+            "autoload": {
+                "psr-4": {
+                    "SimonVomEyser\\CommonMarkExtension\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Simon vom Eyser",
+                    "email": "simon.vom.eyser@gmail.com"
+                }
+            ],
+            "description": "Adds support for lazy images to the phpleague/commonmark markdown parser package",
+            "keywords": [
+                "commonmark",
+                "extension",
+                "image",
+                "lazy",
+                "markdown"
+            ],
+            "support": {
+                "issues": "https://github.com/simonvomeyser/commonmark-ext-lazy-image/issues",
+                "source": "https://github.com/simonvomeyser/commonmark-ext-lazy-image/tree/v2.0.3"
+            },
+            "time": "2022-09-15T14:58:51+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",

@@ -20,6 +20,7 @@ use League\CommonMark\Extension\Footnote\FootnoteExtension;
 use League\CommonMark\MarkdownConverter;
 use Wnx\CommonmarkMarkExtension\MarkExtension;
 use League\CommonMark\Extension\DefaultAttributes\DefaultAttributesExtension;
+use SimonVomEyser\CommonMarkExtension\LazyImageExtension;
 
 class MarkdownParse {
 
@@ -135,6 +136,7 @@ class MarkdownParse {
         $environment->addExtension(new MarkExtension());
         $environment->addExtension(new DefaultAttributesExtension());
         $environment->addExtension(new TableOfContentsExtension());
+        $environment->addExtension(new LazyImageExtension());
     }
     
     /**

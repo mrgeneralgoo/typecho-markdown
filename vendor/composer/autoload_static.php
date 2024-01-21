@@ -19,6 +19,7 @@ class ComposerStaticInit7852e67ce779c9b4da24a67451d4d513
         'S' => 
         array (
             'Symfony\\Polyfill\\Php80\\' => 23,
+            'SimonVomEyser\\CommonMarkExtension\\' => 34,
         ),
         'P' => 
         array (
@@ -43,6 +44,10 @@ class ComposerStaticInit7852e67ce779c9b4da24a67451d4d513
         'Symfony\\Polyfill\\Php80\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
+        ),
+        'SimonVomEyser\\CommonMarkExtension\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/simonvomeyser/commonmark-ext-lazy-image/src',
         ),
         'Psr\\EventDispatcher\\' => 
         array (
