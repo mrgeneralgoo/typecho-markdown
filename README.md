@@ -19,7 +19,7 @@ MarkdownParse 是一款基于 [league/commonmark](https://commonmark.thephpleagu
 ## 安装
 
 1. [下载这个插件](https://github.com/mrgeneralgoo/typecho-markdown/archive/master.zip)
-2. 修改文件夹的名字为"MarkdownParse"
+2. 修改文件夹的名字为 "MarkdownParse"
 3. 添加到你的项目中并启用它
 
 ## 报告问题
@@ -39,8 +39,8 @@ In addition to the functions mentioned in the CommonMark and GFM specifications 
 1. **Mermaid syntax support:** Easily create various charts using Mermaid syntax
 2. **MathJax formula rendering:** Supports rendering mathematical formulas using MathJax  
 3. **Intelligent resource loading:** According to actual rendering needs, it can intelligently identify whether to load required rendering resources without worrying about introducing redundant resources
-4. **Image lazy loading:** Supports native image lazy loading technology in browsers, (MDN-Lazy loading)[https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading]  
-5. **Text highlight:** Realize text highlight effect through `<mark>` HTML tag, (MDN-Mark)[https://developer.mozilla.org/en-US/docs/Web/HTML/Element/mark]
+4. **Image lazy loading:** Supports native image lazy loading technology in browsers, [MDN-Lazy loading](https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading)
+5. **Text highlight:** Realize text highlight effect through `<mark>` HTML tag, [MDN-Mark](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/mark)
 
 ## Requirements
 
