@@ -8,8 +8,13 @@ MarkdownParse 是一款基于 [league/commonmark](https://commonmark.thephpleagu
 1. **Mermaid 语法支持：** 可以利用 Mermaid 语法轻松创建各种图表
 2. **MathJax 数学公式渲染：** 支持使用 MathJax 渲染数学公式
 3. **智能资源加载：** 根据实际渲染需求，能够智能识别是否加载渲染所需资源，无需担心引入冗余资源
-4. **图片延迟加载：** 支持浏览器原生的图片延迟加载技术，(MDN-Lazy loading)[https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading]
-5. **文本高亮：** 通过 `<mark>` HTML 标签实现文本高亮效果，(MDN-Mark)[https://developer.mozilla.org/en-US/docs/Web/HTML/Element/mark]
+4. **图片延迟加载：** 支持浏览器原生的图片延迟加载技术，[MDN-Lazy loading](https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading)
+5. **文本高亮：** 通过 `<mark>` HTML 标签实现文本高亮效果，[MDN-Mark](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/mark)
+
+## 环境要求
+
+* Typecho 1.2.0 or higher
+* PHP 7.4.0 or higher
 
 ## 安装
 
@@ -36,6 +41,11 @@ In addition to the functions mentioned in the CommonMark and GFM specifications 
 3. **Intelligent resource loading:** According to actual rendering needs, it can intelligently identify whether to load required rendering resources without worrying about introducing redundant resources
 4. **Image lazy loading:** Supports native image lazy loading technology in browsers, (MDN-Lazy loading)[https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading]  
 5. **Text highlight:** Realize text highlight effect through `<mark>` HTML tag, (MDN-Mark)[https://developer.mozilla.org/en-US/docs/Web/HTML/Element/mark]
+
+## Requirements
+
+* Typecho 1.2.0 or higher
+* PHP 7.4.0 or higher
 
 ## Installation 
 
