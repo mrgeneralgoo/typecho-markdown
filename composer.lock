@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4c1576836d993a247a03ac81be6e04a7",
+    "content-hash": "7852e67ce779c9b4da24a67451d4d513",
     "packages": [
         {
             "name": "dflydev/dot-access-data",
@@ -333,16 +333,16 @@
         },
         {
             "name": "nette/utils",
-            "version": "v4.0.3",
+            "version": "v4.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/utils.git",
-                "reference": "a9d127dd6a203ce6d255b2e2db49759f7506e015"
+                "reference": "d3ad0aa3b9f934602cb3e3902ebccf10be34d218"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/utils/zipball/a9d127dd6a203ce6d255b2e2db49759f7506e015",
-                "reference": "a9d127dd6a203ce6d255b2e2db49759f7506e015",
+                "url": "https://api.github.com/repos/nette/utils/zipball/d3ad0aa3b9f934602cb3e3902ebccf10be34d218",
+                "reference": "d3ad0aa3b9f934602cb3e3902ebccf10be34d218",
                 "shasum": ""
             },
             "require": {
@@ -413,9 +413,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/utils/issues",
-                "source": "https://github.com/nette/utils/tree/v4.0.3"
+                "source": "https://github.com/nette/utils/tree/v4.0.4"
             },
-            "time": "2023-10-29T21:02:13+00:00"
+            "time": "2024-01-17T16:50:36+00:00"
         },
         {
             "name": "psr/event-dispatcher",
@@ -466,51 +466,6 @@
                 "source": "https://github.com/php-fig/event-dispatcher/tree/1.0.0"
             },
             "time": "2019-01-08T18:20:26+00:00"
-        },
-        {
-            "name": "samwilson/commonmark-latex",
-            "version": "0.4.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/samwilson/commonmark-latex.git",
-                "reference": "931312f6acf183e5b40a713bc196ba6b5aaffed0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/samwilson/commonmark-latex/zipball/931312f6acf183e5b40a713bc196ba6b5aaffed0",
-                "reference": "931312f6acf183e5b40a713bc196ba6b5aaffed0",
-                "shasum": ""
-            },
-            "require": {
-                "league/commonmark": "^2.2"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^9.5",
-                "symfony/process": "^5.0",
-                "symfony/var-dumper": "^5.4",
-                "unleashedtech/php-coding-standard": "^3.1"
-            },
-            "type": "commonmark-extension",
-            "autoload": {
-                "psr-4": {
-                    "Samwilson\\CommonMarkLatex\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "gpl-3.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Sam Wilson"
-                }
-            ],
-            "description": "A LaTeX renderer for CommonMark.",
-            "support": {
-                "issues": "https://github.com/samwilson/commonmark-latex/issues",
-                "source": "https://github.com/samwilson/commonmark-latex/tree/0.4.2"
-            },
-            "time": "2024-01-11T08:46:31+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",

@@ -56,6 +56,7 @@ return array(
     'Nette\\Utils\\ImageColor' => $vendorDir . '/nette/utils/src/Utils/ImageColor.php',
     'Nette\\Utils\\ImageException' => $vendorDir . '/nette/utils/src/Utils/exceptions.php',
     'Nette\\Utils\\ImageType' => $vendorDir . '/nette/utils/src/Utils/ImageType.php',
+    'Nette\\Utils\\Iterables' => $vendorDir . '/nette/utils/src/Utils/Iterables.php',
     'Nette\\Utils\\Json' => $vendorDir . '/nette/utils/src/Utils/Json.php',
     'Nette\\Utils\\JsonException' => $vendorDir . '/nette/utils/src/Utils/exceptions.php',
     'Nette\\Utils\\ObjectHelpers' => $vendorDir . '/nette/utils/src/Utils/ObjectHelpers.php',

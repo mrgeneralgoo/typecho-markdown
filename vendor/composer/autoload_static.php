@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit497de8f792ecf27d2c5470322e712286
+class ComposerStaticInit7852e67ce779c9b4da24a67451d4d513
 {
     public static $files = array (
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
@@ -19,7 +19,6 @@ class ComposerStaticInit497de8f792ecf27d2c5470322e712286
         'S' => 
         array (
             'Symfony\\Polyfill\\Php80\\' => 23,
-            'Samwilson\\CommonMarkLatex\\' => 26,
         ),
         'P' => 
         array (
@@ -44,10 +43,6 @@ class ComposerStaticInit497de8f792ecf27d2c5470322e712286
         'Symfony\\Polyfill\\Php80\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
-        ),
-        'Samwilson\\CommonMarkLatex\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/samwilson/commonmark-latex/src',
         ),
         'Psr\\EventDispatcher\\' => 
         array (
@@ -118,6 +113,7 @@ class ComposerStaticInit497de8f792ecf27d2c5470322e712286
         'Nette\\Utils\\ImageColor' => __DIR__ . '/..' . '/nette/utils/src/Utils/ImageColor.php',
         'Nette\\Utils\\ImageException' => __DIR__ . '/..' . '/nette/utils/src/Utils/exceptions.php',
         'Nette\\Utils\\ImageType' => __DIR__ . '/..' . '/nette/utils/src/Utils/ImageType.php',
+        'Nette\\Utils\\Iterables' => __DIR__ . '/..' . '/nette/utils/src/Utils/Iterables.php',
         'Nette\\Utils\\Json' => __DIR__ . '/..' . '/nette/utils/src/Utils/Json.php',
         'Nette\\Utils\\JsonException' => __DIR__ . '/..' . '/nette/utils/src/Utils/exceptions.php',
         'Nette\\Utils\\ObjectHelpers' => __DIR__ . '/..' . '/nette/utils/src/Utils/ObjectHelpers.php',
@@ -139,9 +135,9 @@ class ComposerStaticInit497de8f792ecf27d2c5470322e712286
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit497de8f792ecf27d2c5470322e712286::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit497de8f792ecf27d2c5470322e712286::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit497de8f792ecf27d2c5470322e712286::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit7852e67ce779c9b4da24a67451d4d513::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit7852e67ce779c9b4da24a67451d4d513::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit7852e67ce779c9b4da24a67451d4d513::$classMap;
 
         }, null, ClassLoader::class);
     }

@@ -1,7 +1,6 @@
 {
     "require": {
         "league/commonmark": "^2.4",
-        "wnx/commonmark-mark-extension": "^1.2",
-        "samwilson/commonmark-latex": "^0.4.2"
+        "wnx/commonmark-mark-extension": "^1.2"
     }
 }

@@ -2,25 +2,10 @@
 
 namespace TypechoPlugin\MarkdownParse;
 
-require __DIR__ . '/vendor/autoload.php';
-
 use Typecho\Plugin\PluginInterface;
 use Typecho\Widget\Helper\Form;
-use League\CommonMark\Environment\Environment;
-use League\CommonMark\Extension\Autolink\AutolinkExtension;
-use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
-use League\CommonMark\Extension\DisallowedRawHtml\DisallowedRawHtmlExtension;
-use League\CommonMark\Extension\TaskList\TaskListExtension;
-use League\CommonMark\Extension\Strikethrough\StrikethroughExtension;
-use League\CommonMark\Extension\Table\TableExtension;
-use League\CommonMark\Extension\HeadingPermalink\HeadingPermalinkExtension;
-use League\CommonMark\Extension\TableOfContents\TableOfContentsExtension;
-use League\CommonMark\Extension\DescriptionList\DescriptionListExtension;
-use League\CommonMark\Extension\ExternalLink\ExternalLinkExtension;
-use League\CommonMark\Extension\Footnote\FootnoteExtension;
-use League\CommonMark\MarkdownConverter;
-use Wnx\CommonmarkMarkExtension\MarkExtension;
-use Samwilson\CommonMarkLatex\LatexRendererExtension;
+use Widget\Options;
+
 
 /**
  * 更快、更全的 Markdown 解析插件
@@ -38,14 +23,14 @@ class Plugin implements PluginInterface
 
     const CDN_SOURCE_DEFAULT = 'jsDelivr';
     const CDN_SOURCE_MERMAID = [
-        'jsDelivr'  => 'https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.min.js',
+        'jsDelivr'  => 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js',
         'cdnjs'     => 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.1.1/mermaid.min.js',
         'bytedance' => 'https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-y/mermaid/8.14.0/mermaid.min.js',
         'baomitu'   => 'https://lib.baomitu.com/mermaid/latest/mermaid.min.js',
         'bootcdn'   => 'https://cdn.bootcdn.net/ajax/libs/mermaid/9.1.1/mermaid.min.js'
     ];
     const CDN_SOURCE_MATHJAX = [
-        'jsDelivr'  => 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.min.js',
+        'jsDelivr'  => 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js',
         'cdnjs'     => 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.min.js',
         'bytedance' => 'https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-y/mathjax/3.2.0/es5/tex-mml-chtml.min.js',
         'baomitu'   => 'https://lib.baomitu.com/mathjax/latest/es5/tex-mml-chtml.min.js',
@@ -56,6 +41,7 @@ class Plugin implements PluginInterface
     {
         \Typecho\Plugin::factory('\Widget\Base\Contents')->markdown = [__CLASS__, 'parse'];
         \Typecho\Plugin::factory('\Widget\Base\Comments')->markdown = [__CLASS__, 'parse'];
+        \Typecho\Plugin::factory('Widget_Archive')->footer          = [__CLASS__, 'resourceLink'];
     }
 
     public static function deactivate()
@@ -88,45 +74,19 @@ class Plugin implements PluginInterface
 
     public static function parse($text)
     {
-        $config = [
-            // @todo config, enable or not
-            'table_of_contents' => [
-                'position' => 'placeholder',
-                'placeholder' => '[TOC]',
-            ],
-            'external_link' => [
-                // @todo config, default from typecho config
-                'internal_hosts' => ['foo.example.com', 'bar.example.com', '/(^|\.)google\.com$/'],
-                'open_in_new_window' => true,
-            ],
-            'mark' => [
-                // @todo config, enable or not
-                'character' => ':',
-            ],
-        ];
-        $environment = new Environment($config);
+        return ParsedownExtension::getInstance()->parse($text);
+    }
 
-        // base
-        $environment->addExtension(new CommonMarkCoreExtension());
+    public static function resourceLink()
+    {
+        $configCDN = 'jsDelivr';
+        $resourceContent = '';
+        $resourceContent .= '<script type="text/javascript">function initMermaid(){mermaid.initialize({startOnLoad:true})}</script>';
+        $resourceContent .= sprintf('<script async defer type="text/javascript" src="%s"></script>', !empty(self::CDN_SOURCE_MERMAID[$configCDN]) ? self::CDN_SOURCE_MERMAID[$configCDN] : self::CDN_SOURCE_MERMAID[self::CDN_SOURCE_DEFAULT]);
+        $resourceContent .= '<script type="text/javascript">(function(){MathJax={tex:{inlineMath:[[\'$\',\'$\'],[\'\\\\(\',\'\\\\)\']]}}})();</script>';
+        $resourceContent .= '<script async defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>';
+        $resourceContent .= sprintf('<script id="MathJax-script" async defer type="text/javascript" src="%s"></script>', !empty(self::CDN_SOURCE_MATHJAX[$configCDN]) ? self::CDN_SOURCE_MATHJAX[$configCDN] : self::CDN_SOURCE_MATHJAX[self::CDN_SOURCE_DEFAULT]);
 
-        // core
-        $environment->addExtension(new AutolinkExtension());
-        $environment->addExtension(new DisallowedRawHtmlExtension());
-        $environment->addExtension(new StrikethroughExtension());
-        $environment->addExtension(new ExternalLinkExtension());
-        $environment->addExtension(new FootnoteExtension());
-
-        // extension
-        $environment->addExtension(new TableExtension());
-        $environment->addExtension(new TaskListExtension());
-        $environment->addExtension(new HeadingPermalinkExtension());
-        $environment->addExtension(new TableOfContentsExtension());
-        $environment->addExtension(new DescriptionListExtension());
-        $environment->addExtension(new LatexRendererExtension());
-        $environment->addExtension(new MarkExtension());
-
-
-        $markdownParser = new MarkdownConverter($environment);
-        return $markdownParser->convert($text)->getContent();
+        echo $resourceContent;
     }
 }
