@@ -21,7 +21,7 @@ use League\CommonMark\MarkdownConverter;
 use Wnx\CommonmarkMarkExtension\MarkExtension;
 use League\CommonMark\Extension\DefaultAttributes\DefaultAttributesExtension;
 
-class ParsedownExtension {
+class MarkdownParse {
 
     // Flag to determine if Table of Contents (TOC) is enabled
     private bool $isTocEnable = false;
