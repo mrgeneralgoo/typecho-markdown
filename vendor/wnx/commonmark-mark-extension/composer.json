@@ -1,0 +1,47 @@
+{
+    "name": "wnx/commonmark-mark-extension",
+    "description": "Render ==highlighted== texts as <mark> elements in league/commonmark",
+    "keywords": [
+        "wnx",
+        "commonmark-mark-extension"
+    ],
+    "homepage": "https://github.com/wnx/commonmark-mark-extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Stefan Zweifel",
+            "email": "stefan@stefanzweifel.dev",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "league/commonmark": "^2.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "phpunit/phpunit": "^9.5 | ^10",
+        "vimeo/psalm": "^5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Wnx\\CommonmarkMarkExtension\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Wnx\\CommonmarkMarkExtension\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "psalm": "vendor/bin/psalm",
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
+        "format": "vendor/bin/php-cs-fixer fix --allow-risky=yes"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
