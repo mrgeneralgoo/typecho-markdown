@@ -50,12 +50,12 @@ class MarkdownParse
      * Get the singleton instance of MarkdownParse
      *
      * @return MarkdownParse The singleton instance
-     * @throws \RuntimeException If PHP version is less than 7.4.0
+     * @throws \RuntimeException If PHP version is less than 8.0
      */
     public static function getInstance(): MarkdownParse
     {
         if (self::$instance === null) {
-            $requiredVersion = '7.4.0';
+            $requiredVersion = '8.0';
             if (version_compare(phpversion(), $requiredVersion, '<')) {
                 throw new \RuntimeException('MarkdownParse requires PHP ' . $requiredVersion . ' or later.');
             }
