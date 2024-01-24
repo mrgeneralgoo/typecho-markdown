@@ -4,7 +4,7 @@ namespace TypechoPlugin\MarkdownParse;
 
 if (file_exists(__DIR__ . '/vendor/autoload.php')) {
     require_once __DIR__ . '/vendor/autoload.php';
-} elseif (file_exists(__DIR__ . 'vendor.phar')) {
+} elseif (file_exists(__DIR__ . '/vendor.phar')) {
     require_once 'phar://' . __DIR__ . '/vendor.phar/vendor/autoload.php';
 }
 
