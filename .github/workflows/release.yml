@@ -10,18 +10,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        php: [8.0, 8.1, 8.2, 8.3]
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Set up PHP
+        id: setup-php
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
+          php-version: '8.0'
           extensions: mbstring
 
       - name: Install Composer Dependencies
@@ -37,6 +34,7 @@ jobs:
 
       - name: Package Files
         run: |
+          rm -rf vendor/
           mkdir MarkdownParse
           mv vendor.phar MarkdownParse/
           cp LICENSE.md MarkdownParse/
