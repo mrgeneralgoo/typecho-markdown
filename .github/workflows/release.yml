@@ -3,8 +3,8 @@ name: Release
 on:
   push:
     branches: [ 2.0 ]
-    # tags:
-    #   - '*'
+    tags:
+      - '*'
 
 jobs:
   build:
@@ -45,7 +45,7 @@ jobs:
 
       - name: Get Latest Release Version
         id: get_latest_release
-        run: echo "::set-output name=version::$(curl -s https://api.github.com/repos/mrgeneralgoo/typecho-markdown/releases/latest | jq -r .tag_name)"
+        run: echo "VERSION=$(curl -s https://api.github.com/repos/mrgeneralgoo/typecho-markdown/releases/latest | jq -r .tag_name)" >> $GITHUB_OUTPUT
 
       - name: Create Release
         uses: ncipollo/release-action@v1
@@ -54,4 +54,4 @@ jobs:
           tag: ${{ github.ref }}
           artifacts: "MarkdownParse.zip"
           body: |
-            **Full Changelog**: https://github.com/mrgeneralgoo/typecho-markdown/compare/${{ steps.get_latest_release.outputs.version }}...${{ github.ref }})
+            **Full Changelog**: https://github.com/mrgeneralgoo/typecho-markdown/compare/${{ steps.get_latest_release.outputs.VERSION }}...${{ github.ref }})
