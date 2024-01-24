@@ -71,7 +71,7 @@ class Plugin implements PluginInterface
 
     public static function parse($text)
     {
-        $markdownParser = ParsedownExtension::getInstance();
+        $markdownParser = MarkdownParse::getInstance();
 
         $markdownParser->setIsTocEnable((bool)Options::alloc()->plugin('MarkdownParse')->is_available_toc);
 
@@ -83,7 +83,7 @@ class Plugin implements PluginInterface
         $configMermaid      = (int)Options::alloc()->plugin('MarkdownParse')->is_available_mermaid;
         $configLaTex        = (int)Options::alloc()->plugin('MarkdownParse')->is_available_mathjax;
         $configCDN          = (string)Options::alloc()->plugin('MarkdownParse')->cdn_source;
-        $markdownParser     = ParsedownExtension::getInstance();
+        $markdownParser     = MarkdownParse::getInstance();
         $isAvailableMermaid = $configMermaid === self::RADIO_VALUE_FORCE || ($markdownParser->getIsNeedMermaid() && $configMermaid === self::RADIO_VALUE_AUTO);
 
         // @Todo performance for latex
