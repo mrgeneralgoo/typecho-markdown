@@ -50,7 +50,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.AUTO_RELEASE_TOKEN }}
-          tag: ${{ github.ref }}
+          tag: ${{github.ref_name}}
           artifacts: "MarkdownParse.zip"
           body: |
-            **Full Changelog**: https://github.com/mrgeneralgoo/typecho-markdown/compare/${{ steps.get_latest_release.outputs.VERSION }}...${{ github.ref }})
+            **Full Changelog**: https://github.com/mrgeneralgoo/typecho-markdown/compare/${{ steps.get_latest_release.outputs.VERSION }}...${{github.ref_name}})
