@@ -38,8 +38,8 @@ class MarkdownParse
     // Flag to determine if LaTex support is needed
     private bool $isNeedLaTex = false;
 
-    // Singleton instance of ParsedownExtension
-    private static ?ParsedownExtension $instance = null;
+    // Singleton instance of MarkdownParse
+    private static ?MarkdownParse $instance = null;
 
     // Private constructor to enforce singleton pattern
     private function __construct()
@@ -47,17 +47,17 @@ class MarkdownParse
     }
 
     /**
-     * Get the singleton instance of ParsedownExtension
+     * Get the singleton instance of MarkdownParse
      *
-     * @return ParsedownExtension The singleton instance
+     * @return MarkdownParse The singleton instance
      * @throws \RuntimeException If PHP version is less than 7.4.0
      */
-    public static function getInstance(): ParsedownExtension
+    public static function getInstance(): MarkdownParse
     {
         if (self::$instance === null) {
             $requiredVersion = '7.4.0';
             if (version_compare(phpversion(), $requiredVersion, '<')) {
-                throw new \RuntimeException('ParsedownExtension requires PHP ' . $requiredVersion . ' or later.');
+                throw new \RuntimeException('MarkdownParse requires PHP ' . $requiredVersion . ' or later.');
             }
             self::$instance = new self();
         }
