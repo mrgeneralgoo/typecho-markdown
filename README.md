@@ -14,7 +14,7 @@ MarkdownParse 是一款基于 [league/commonmark](https://commonmark.thephpleagu
 ## 环境要求
 
 * Typecho 1.2.0 or higher
-* PHP 7.4.0 or higher
+* PHP 8.0 or higher
 
 ## 安装
 
@@ -45,7 +45,7 @@ In addition to the functions mentioned in the CommonMark and GFM specifications 
 ## Requirements
 
 * Typecho 1.2.0 or higher
-* PHP 7.4.0 or higher
+* PHP 8.0 or higher
 
 ## Installation 
 
