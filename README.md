@@ -18,7 +18,7 @@ MarkdownParse 是一款基于 [league/commonmark](https://commonmark.thephpleagu
 
 ## 安装
 
-1. [下载这个插件](https://github.com/mrgeneralgoo/typecho-markdown/archive/master.zip)
+1. [下载这个插件](https://github.com/mrgeneralgoo/typecho-markdown/releases)
 2. 修改文件夹的名字为 "MarkdownParse"
 3. 添加到你的项目中并启用它
 
@@ -49,7 +49,7 @@ In addition to the functions mentioned in the CommonMark and GFM specifications 
 
 ## Installation 
 
-1. [Download this plugin](https://github.com/mrgeneralgoo/typecho-markdown/archive/master.zip)  
+1. [Download this plugin](https://github.com/mrgeneralgoo/typecho-markdown/releases)  
 2. Rename the folder to "MarkdownParse"  
 3. Add it to your project and activate it
 
