@@ -2,7 +2,11 @@
 
 namespace TypechoPlugin\MarkdownParse;
 
-require __DIR__ . '/vendor/autoload.php';
+if (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require_once __DIR__ . '/vendor/autoload.php';
+} elseif (file_exists(__DIR__ . 'vendor.phar')) {
+    require_once 'phar://' . __DIR__ . '/vendor.phar/vendor/autoload.php';
+}
 
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\Autolink\AutolinkExtension;
@@ -22,7 +26,8 @@ use Wnx\CommonmarkMarkExtension\MarkExtension;
 use League\CommonMark\Extension\DefaultAttributes\DefaultAttributesExtension;
 use SimonVomEyser\CommonMarkExtension\LazyImageExtension;
 
-class MarkdownParse {
+class MarkdownParse
+{
 
     // Flag to determine if Table of Contents (TOC) is enabled
     private bool $isTocEnable = false;
@@ -33,8 +38,8 @@ class MarkdownParse {
     // Flag to determine if LaTex support is needed
     private bool $isNeedLaTex = false;
 
-    // Singleton instance of ParsedownExtension
-    private static ?ParsedownExtension $instance = null;
+    // Singleton instance of MarkdownParse
+    private static ?MarkdownParse $instance = null;
 
     // Private constructor to enforce singleton pattern
     private function __construct()
@@ -42,17 +47,17 @@ class MarkdownParse {
     }
 
     /**
-     * Get the singleton instance of ParsedownExtension
+     * Get the singleton instance of MarkdownParse
      *
-     * @return ParsedownExtension The singleton instance
-     * @throws \RuntimeException If PHP version is less than 7.4.0
+     * @return MarkdownParse The singleton instance
+     * @throws \RuntimeException If PHP version is less than 8.0
      */
-    public static function getInstance(): ParsedownExtension
+    public static function getInstance(): MarkdownParse
     {
         if (self::$instance === null) {
-            $requiredVersion = '7.4.0';
+            $requiredVersion = '8.0';
             if (version_compare(phpversion(), $requiredVersion, '<')) {
-                throw new \RuntimeException('ParsedownExtension requires PHP ' . $requiredVersion . ' or later.');
+                throw new \RuntimeException('MarkdownParse requires PHP ' . $requiredVersion . ' or later.');
             }
             self::$instance = new self();
         }
@@ -84,14 +89,14 @@ class MarkdownParse {
     public function getConfig(): array
     {
         $instance = $this::getInstance();
-        
+
         $defaultConfig = [
             'table_of_contents' => [
-                'position' => 'placeholder',
+                'position'    => 'placeholder',
                 'placeholder' => '[TOC]',
             ],
             'external_link' => [
-                'internal_hosts' => ['foo.example.com', 'bar.example.com', '/(^|\.)google\.com$/'],
+                'internal_hosts'     => ['foo.example.com', 'bar.example.com', '/(^|\.)google\.com$/'],
                 'open_in_new_window' => true,
             ],
             'default_attributes' => [
@@ -138,7 +143,7 @@ class MarkdownParse {
         $environment->addExtension(new TableOfContentsExtension());
         $environment->addExtension(new LazyImageExtension());
     }
-    
+
     /**
      * Get the flag indicating if Table of Contents (TOC) is enabled
      *

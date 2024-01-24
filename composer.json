@@ -2,6 +2,7 @@
     "require": {
         "league/commonmark": "^2.4",
         "wnx/commonmark-mark-extension": "^1.2",
-        "simonvomeyser/commonmark-ext-lazy-image": "^2.0"
+        "simonvomeyser/commonmark-ext-lazy-image": "^2.0",
+        "clue/phar-composer": "^1.4"
     }
 }

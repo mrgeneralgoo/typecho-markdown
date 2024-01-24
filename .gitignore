@@ -1,1 +1,3 @@
 tests/usr
+vendor
+vendor.phar

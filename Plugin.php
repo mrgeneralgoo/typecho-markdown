@@ -12,7 +12,7 @@ use Widget\Options;
  * @author  mrgeneral
  * @package MarkdownParse
  * @version 2.0.0
- * @link    https://www.chengxiaobai.cn
+ * @link    https://www.chengxiaobai.cn/
  */
 class Plugin implements PluginInterface
 {
@@ -22,16 +22,16 @@ class Plugin implements PluginInterface
 
     const CDN_SOURCE_DEFAULT = 'jsDelivr';
     const CDN_SOURCE_MERMAID = [
-        'jsDelivr'  => 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js',
-        'cdnjs'     => 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.7.0/mermaid.min.js',
-        'baomitu'   => 'https://lib.baomitu.com/mermaid/latest/mermaid.min.js',
-        'bootcdn'   => 'https://cdn.bootcdn.net/ajax/libs/mermaid/10.7.0/mermaid.min.js'
+        'jsDelivr' => 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js',
+        'cdnjs'    => 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.7.0/mermaid.min.js',
+        'baomitu'  => 'https://lib.baomitu.com/mermaid/latest/mermaid.min.js',
+        'bootcdn'  => 'https://cdn.bootcdn.net/ajax/libs/mermaid/10.7.0/mermaid.min.js'
     ];
     const CDN_SOURCE_MATHJAX = [
-        'jsDelivr'  => 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js',
-        'cdnjs'     => 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js',
-        'baomitu'   => 'https://lib.baomitu.com/mathjax/latest/es5/tex-mml-chtml.min.js',
-        'bootcdn'   => 'https://cdn.bootcdn.net/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js'
+        'jsDelivr' => 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js',
+        'cdnjs'    => 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js',
+        'baomitu'  => 'https://lib.baomitu.com/mathjax/latest/es5/tex-mml-chtml.min.js',
+        'bootcdn'  => 'https://cdn.bootcdn.net/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js'
     ];
 
     public static function activate()
@@ -85,7 +85,7 @@ class Plugin implements PluginInterface
         $configCDN          = (string)Options::alloc()->plugin('MarkdownParse')->cdn_source;
         $markdownParser     = ParsedownExtension::getInstance();
         $isAvailableMermaid = $configMermaid === self::RADIO_VALUE_FORCE || ($markdownParser->getIsNeedMermaid() && $configMermaid === self::RADIO_VALUE_AUTO);
-        
+
         // @Todo performance for latex
         // $isAvailableMathjax = $configLaTex === self::RADIO_VALUE_FORCE || ($markdownParser->getIsNeedLaTex() && $configLaTex === self::RADIO_VALUE_AUTO);
         $isAvailableMathjax = $configLaTex === self::RADIO_VALUE_FORCE || $configLaTex === self::RADIO_VALUE_AUTO;
@@ -102,7 +102,7 @@ class Plugin implements PluginInterface
             $resourceContent .= '<script async defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>';
             $resourceContent .= sprintf('<script id="MathJax-script" async defer type="text/javascript" src="%s"></script>', !empty(self::CDN_SOURCE_MATHJAX[$configCDN]) ? self::CDN_SOURCE_MATHJAX[$configCDN] : self::CDN_SOURCE_MATHJAX[self::CDN_SOURCE_DEFAULT]);
         }
-        
+
         echo $resourceContent;
     }
 }
