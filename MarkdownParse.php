@@ -22,7 +22,8 @@ use Wnx\CommonmarkMarkExtension\MarkExtension;
 use League\CommonMark\Extension\DefaultAttributes\DefaultAttributesExtension;
 use SimonVomEyser\CommonMarkExtension\LazyImageExtension;
 
-class MarkdownParse {
+class MarkdownParse
+{
 
     // Flag to determine if Table of Contents (TOC) is enabled
     private bool $isTocEnable = false;
@@ -84,14 +85,14 @@ class MarkdownParse {
     public function getConfig(): array
     {
         $instance = $this::getInstance();
-        
+
         $defaultConfig = [
             'table_of_contents' => [
-                'position' => 'placeholder',
+                'position'    => 'placeholder',
                 'placeholder' => '[TOC]',
             ],
             'external_link' => [
-                'internal_hosts' => ['foo.example.com', 'bar.example.com', '/(^|\.)google\.com$/'],
+                'internal_hosts'     => ['foo.example.com', 'bar.example.com', '/(^|\.)google\.com$/'],
                 'open_in_new_window' => true,
             ],
             'default_attributes' => [
@@ -138,7 +139,7 @@ class MarkdownParse {
         $environment->addExtension(new TableOfContentsExtension());
         $environment->addExtension(new LazyImageExtension());
     }
-    
+
     /**
      * Get the flag indicating if Table of Contents (TOC) is enabled
      *
