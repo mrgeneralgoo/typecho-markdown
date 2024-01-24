@@ -1,0 +1,59 @@
+name: Release
+
+on:
+  push:
+    branches: [ 2.0 ]
+    # tags:
+    #   - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: [7.4, 8.0, 8.1, 8.2, 8.3]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring
+
+      - name: Install Composer Dependencies
+        run: |
+          composer check-platform-reqs && composer install --no-dev --prefer-dist -o
+
+      - name: Create vendor.phar
+        run: |
+          mkdir temp
+          cp -r vendor temp/
+          cp composer.json temp/
+          php -d phar.readonly=0 vendor/bin/phar-composer build temp vendor.phar
+
+      - name: Package Files
+        run: |
+          mkdir MarkdownParse
+          mv vendor.phar MarkdownParse/
+          cp LICENSE.md MarkdownParse/
+          cp MarkdownParse.php MarkdownParse/
+          cp Plugin.php MarkdownParse/
+          cp README.md MarkdownParse/
+          zip -r MarkdownParse.zip MarkdownParse
+
+      - name: Get Latest Release Version
+        id: get_latest_release
+        run: echo "::set-output name=version::$(curl -s https://api.github.com/repos/mrgeneralgoo/typecho-markdown/releases/latest | jq -r .tag_name)"
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref }}
+          artifacts: "MarkdownParse.zip"
+          body: |
+            **Full Changelog**: https://github.com/mrgeneralgoo/typecho-markdown/compare/${{ steps.get_latest_release.outputs.version }}...${{ github.ref }})
