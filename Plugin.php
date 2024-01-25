@@ -91,10 +91,7 @@ class Plugin implements PluginInterface
         $configCDN          = (string)Options::alloc()->plugin('MarkdownParse')->cdn_source;
         $markdownParser     = MarkdownParse::getInstance();
         $isAvailableMermaid = $configMermaid === self::RADIO_VALUE_FORCE || ($markdownParser->getIsNeedMermaid() && $configMermaid === self::RADIO_VALUE_AUTO);
-
-        // @Todo performance for latex
-        // $isAvailableMathjax = $configLaTex === self::RADIO_VALUE_FORCE || ($markdownParser->getIsNeedLaTex() && $configLaTex === self::RADIO_VALUE_AUTO);
-        $isAvailableMathjax = $configLaTex === self::RADIO_VALUE_FORCE || $configLaTex === self::RADIO_VALUE_AUTO;
+        $isAvailableMathjax = $configLaTex   === self::RADIO_VALUE_FORCE || ($markdownParser->getIsNeedLaTex() && $configLaTex === self::RADIO_VALUE_AUTO);
 
         $resourceContent = '';
 

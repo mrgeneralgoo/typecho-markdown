@@ -34,7 +34,7 @@ class MarkdownParse
     // Flag to determine if LaTex support is needed
     private bool $isNeedLaTex = false;
 
-    // The internal hosts, Supports regular expressions ("/(^|\.)example\.com$/"), multiple values can be separated by commas.
+    // The internal hosts, supports regular expressions ("/(^|\.)example\.com$/"), multiple values can be separated by commas.
     private string $internalHosts = '';
 
     // Singleton instance of MarkdownParse
@@ -73,11 +73,66 @@ class MarkdownParse
      */
     public function parse(string $text, array $config = []): string
     {
+        list($text, $config) = $this->preParse($text, $config);
+
         $environment = new Environment(array_merge($this->getConfig(), $config));
 
         $this->addCommonMarkExtensions($environment);
 
-        return (new MarkdownConverter($environment))->convert($text)->getContent();
+        $htmlContent = (new MarkdownConverter($environment))->convert($text)->getContent();
+
+        list($htmlContent, $config) = $this->postParse($htmlContent, $config);
+
+        return $htmlContent;
+    }
+
+    /**
+     * Placeholder function for actions to be performed before parsing
+     *
+     * @param string $text The input text
+     * @param array $config Optional configuration for the parsing process
+     * @return array Result of actions before parsing
+     */
+    public function preParse(string $text, array $config = []): array
+    {
+        // Remove Table of Contents config if it is not enabled
+        if (!$this->isTocEnable) {
+            $config['table_of_contents']['placeholder'] = '';
+        }
+
+        // Set internal hosts for external link config
+        if (!empty($this->internalHosts)) {
+            $config['external_link']['internal_hosts'] = explode(',', $this->internalHosts);
+        }
+
+        // Check if LaTeX is needed by searching for $$ or $ in the text
+        if (!$this->isNeedLaTex) {
+            $this->isNeedLaTex = (bool) preg_match('/\${1,2}[^`]*?\${1,2}/m', $text);
+        }
+
+        // Replace double $$ at the beginning and end of the text with <div> tags
+        $count             = 0;
+        $text              = preg_replace('/(^\${2,})(.*)(\${2,}$)/ms', '<div>$1$2$3</div>', $text, -1, $count);
+        $this->isNeedLaTex = $this->isNeedLaTex || $count > 0;
+
+        return [$text, $config];
+    }
+
+    /**
+     * Placeholder function for actions to be performed after parsing
+     *
+     * @param string $htmlContent The parsed HTML content
+     * @param array $config Optional configuration for the parsing process
+     * @return array Result of actions after parsing
+     */
+    public function postParse(string $htmlContent, array $config = []): array
+    {
+        // If LaTeX is needed, remove <div> tags added during preParse
+        if ($this->isNeedLaTex) {
+            $htmlContent = str_replace(['<div>$$', '$$</div>'], '$$', $htmlContent);
+        }
+
+        return [$htmlContent, $config];
     }
 
     /**
@@ -111,16 +166,6 @@ class MarkdownParse
                 ]
             ]
         ];
-
-        // Remove Table of Contents config if it is not enabled
-        if (!$this->isTocEnable) {
-            $defaultConfig['table_of_contents']['placeholder'] = '';
-        }
-
-        // Parse internal hosts to array
-        if (!empty($this->internalHosts)) {
-            $defaultConfig['external_link']['internal_hosts'] = explode(',', $this->internalHosts);
-        }
 
         return $defaultConfig;
     }
