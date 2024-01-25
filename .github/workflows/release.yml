@@ -29,6 +29,7 @@ jobs:
           mkdir temp
           cp -r vendor temp/
           cp composer.json temp/
+          cp MarkdownParse.php temp/
           php -d phar.readonly=0 vendor/bin/phar-composer build temp vendor.phar
 
       - name: Package Files
@@ -37,7 +38,6 @@ jobs:
           mkdir MarkdownParse
           mv vendor.phar MarkdownParse/
           cp LICENSE.md MarkdownParse/
-          cp MarkdownParse.php MarkdownParse/
           cp Plugin.php MarkdownParse/
           cp README.md MarkdownParse/
           zip -r MarkdownParse.zip MarkdownParse

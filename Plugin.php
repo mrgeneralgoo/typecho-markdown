@@ -2,6 +2,8 @@
 
 namespace TypechoPlugin\MarkdownParse;
 
+require_once 'phar://' . __DIR__ . '/vendor.phar/MarkdownParse.php';
+
 use Typecho\Plugin\PluginInterface;
 use Typecho\Widget\Helper\Form;
 use Widget\Options;

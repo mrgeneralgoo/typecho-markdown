@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . './../MarkdownParse.php';
+require_once 'phar://' . __DIR__ . '/../vendor.phar/MarkdownParse.php';
 
 use TypechoPlugin\MarkdownParse\MarkdownParse;
 
