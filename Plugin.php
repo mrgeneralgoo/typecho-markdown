@@ -2,6 +2,8 @@
 
 namespace TypechoPlugin\MarkdownParse;
 
+require_once 'phar://' . __DIR__ . '/vendor.phar/MarkdownParse.php';
+
 use Typecho\Plugin\PluginInterface;
 use Typecho\Widget\Helper\Form;
 use Widget\Options;
@@ -60,6 +62,9 @@ class Plugin implements PluginInterface
         $elementCDNSource = new Form\Element\Radio('cdn_source', array_combine(array_keys(self::CDN_SOURCE_MERMAID), array_map('_t', array_keys(self::CDN_SOURCE_MERMAID))), self::CDN_SOURCE_DEFAULT);
         $form->addInput($elementCDNSource);
 
+        $elementInternalHosts = new Form\Element\Text('internal_hosts', null, parse_url(Options::alloc()->siteUrl(), PHP_URL_HOST), _t('设置内部链接'), _t('默认为本站点地址，支持正则表达式("/(^|\.)example\.com$/")，多个可用英文逗号分隔。外部链接解析策略：默认在新窗口中打开，并加上 "noopener noreferrer" 属性'));
+        $form->addInput($elementInternalHosts);
+
         $elementHelper = new Form\Element\Radio('show_help_info', [], self::RADIO_VALUE_DISABLE, _t('<a href="https://www.chengxiaobai.cn/php/markdown-parser-library.html/">点击查看更新信息</a>'), _t('<a href="https://www.chengxiaobai.cn/record/markdown-concise-grammar-manual.html/">点击查看语法手册</a>'));
         $form->addInput($elementHelper);
     }
@@ -71,9 +76,10 @@ class Plugin implements PluginInterface
 
     public static function parse($text)
     {
-        $markdownParser = ParsedownExtension::getInstance();
+        $markdownParser = MarkdownParse::getInstance();
 
         $markdownParser->setIsTocEnable((bool)Options::alloc()->plugin('MarkdownParse')->is_available_toc);
+        $markdownParser->setInternalHosts((string)Options::alloc()->plugin('MarkdownParse')->internal_hosts);
 
         return $markdownParser->parse($text);
     }
@@ -83,12 +89,9 @@ class Plugin implements PluginInterface
         $configMermaid      = (int)Options::alloc()->plugin('MarkdownParse')->is_available_mermaid;
         $configLaTex        = (int)Options::alloc()->plugin('MarkdownParse')->is_available_mathjax;
         $configCDN          = (string)Options::alloc()->plugin('MarkdownParse')->cdn_source;
-        $markdownParser     = ParsedownExtension::getInstance();
+        $markdownParser     = MarkdownParse::getInstance();
         $isAvailableMermaid = $configMermaid === self::RADIO_VALUE_FORCE || ($markdownParser->getIsNeedMermaid() && $configMermaid === self::RADIO_VALUE_AUTO);
-
-        // @Todo performance for latex
-        // $isAvailableMathjax = $configLaTex === self::RADIO_VALUE_FORCE || ($markdownParser->getIsNeedLaTex() && $configLaTex === self::RADIO_VALUE_AUTO);
-        $isAvailableMathjax = $configLaTex === self::RADIO_VALUE_FORCE || $configLaTex === self::RADIO_VALUE_AUTO;
+        $isAvailableMathjax = $configLaTex   === self::RADIO_VALUE_FORCE || ($markdownParser->getIsNeedLaTex() && $configLaTex === self::RADIO_VALUE_AUTO);
 
         $resourceContent = '';
 
