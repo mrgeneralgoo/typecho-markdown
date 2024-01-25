@@ -34,6 +34,9 @@ class MarkdownParse
     // Flag to determine if LaTex support is needed
     private bool $isNeedLaTex = false;
 
+    // The internal hosts, Supports regular expressions ("/(^|\.)example\.com$/"), multiple values can be separated by commas.
+    private string $internalHosts = '';
+
     // Singleton instance of MarkdownParse
     private static ?MarkdownParse $instance = null;
 
@@ -92,7 +95,7 @@ class MarkdownParse
                 'placeholder' => '[TOC]',
             ],
             'external_link' => [
-                'internal_hosts'     => ['foo.example.com', 'bar.example.com', '/(^|\.)google\.com$/'],
+                'internal_hosts'     => [],
                 'open_in_new_window' => true,
             ],
             'default_attributes' => [
@@ -112,6 +115,11 @@ class MarkdownParse
         // Remove Table of Contents config if it is not enabled
         if (!$this->isTocEnable) {
             $defaultConfig['table_of_contents']['placeholder'] = '';
+        }
+
+        // Parse internal hosts to array
+        if (!empty($this->internalHosts)) {
+            $defaultConfig['external_link']['internal_hosts'] = explode(',', $this->internalHosts);
         }
 
         return $defaultConfig;
@@ -198,5 +206,25 @@ class MarkdownParse
     public function setIsNeedLaTex(bool $isNeedLaTex): void
     {
         $this->isNeedLaTex = $isNeedLaTex;
+    }
+
+    /**
+     * Get the internal hosts value
+     *
+     * @return string The internal hosts value
+     */
+    public function getInternalHosts(): string
+    {
+        return $this->internalHosts;
+    }
+
+    /**
+     * Set the internal hosts value
+     *
+     * @param string $internalHosts The internal hosts value
+     */
+    public function setInternalHosts(string $internalHosts): void
+    {
+        $this->internalHosts = $internalHosts;
     }
 }
