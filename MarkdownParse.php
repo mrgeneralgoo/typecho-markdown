@@ -107,13 +107,13 @@ class MarkdownParse
 
         // Check if LaTeX is needed by searching for $$ or $ in the text
         if (!$this->isNeedLaTex) {
-            $this->isNeedLaTex = (bool) preg_match('/\${1,2}[^`]*?\${1,2}/m', $text);
+            $this->isNeedLaTex = (bool)preg_match('/\${1,2}[^`]*?\${1,2}/m', $text);
         }
 
         // Replace double $$ at the beginning and end of the text with <div> tags
-        $count             = 0;
-        $text              = preg_replace('/(^\${2,})(.*)(\${2,}$)/ms', '<div>$1$2$3</div>', $text, -1, $count);
-        $this->isNeedLaTex = $this->isNeedLaTex || $count > 0;
+        if ($this->isNeedLaTex) {
+            $text  = preg_replace('/(^\${2,})([\s\S]+?)(\${2,})/m', '<div>$1$2$3</div>', $text, -1);
+        }
 
         return [$text, $config];
     }
