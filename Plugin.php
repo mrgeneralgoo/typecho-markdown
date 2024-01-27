@@ -62,7 +62,7 @@ class Plugin implements PluginInterface
         $elementCDNSource = new Form\Element\Radio('cdn_source', array_combine(array_keys(self::CDN_SOURCE_MERMAID), array_map('_t', array_keys(self::CDN_SOURCE_MERMAID))), self::CDN_SOURCE_DEFAULT);
         $form->addInput($elementCDNSource);
 
-        $elementInternalHosts = new Form\Element\Text('internal_hosts', null, parse_url(Options::alloc()->siteUrl(), PHP_URL_HOST), _t('设置内部链接'), _t('默认为本站点地址，支持正则表达式("/(^|\.)example\.com$/")，多个可用英文逗号分隔。外部链接解析策略：默认在新窗口中打开，并加上 "noopener noreferrer" 属性'));
+        $elementInternalHosts = new Form\Element\Text('internal_hosts', null, '', _t('设置内部链接'), _t('默认为本站点地址，支持正则表达式("/(^|\.)example\.com$/")，多个可用英文逗号分隔。<br/>外部链接解析策略：默认在新窗口中打开，并加上 "noopener noreferrer" 属性'));
         $form->addInput($elementInternalHosts);
 
         $elementHelper = new Form\Element\Radio('show_help_info', [], self::RADIO_VALUE_DISABLE, _t('<a href="https://www.chengxiaobai.cn/php/markdown-parser-library.html/">点击查看更新信息</a>'), _t('<a href="https://www.chengxiaobai.cn/record/markdown-concise-grammar-manual.html/">点击查看语法手册</a>'));
@@ -79,7 +79,7 @@ class Plugin implements PluginInterface
         $markdownParser = MarkdownParse::getInstance();
 
         $markdownParser->setIsTocEnable((bool)Options::alloc()->plugin('MarkdownParse')->is_available_toc);
-        $markdownParser->setInternalHosts((string)Options::alloc()->plugin('MarkdownParse')->internal_hosts);
+        $markdownParser->setInternalHosts((string)Options::alloc()->plugin('MarkdownParse')->internal_hosts ?: parse_url(Options::alloc()->siteUrl, PHP_URL_HOST));
 
         return $markdownParser->parse($text);
     }
