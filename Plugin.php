@@ -24,10 +24,10 @@ class Plugin implements PluginInterface
 
     const CDN_SOURCE_DEFAULT = 'jsDelivr';
     const CDN_SOURCE_MERMAID = [
-        'jsDelivr' => 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js',
-        'cdnjs'    => 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.7.0/mermaid.min.js',
-        'baomitu'  => 'https://lib.baomitu.com/mermaid/latest/mermaid.min.js',
-        'bootcdn'  => 'https://cdn.bootcdn.net/ajax/libs/mermaid/10.7.0/mermaid.min.js'
+        'jsDelivr' => 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs',
+        'cdnjs'    => 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.7.0/mermaid.esm.min.mjs',
+        'baomitu'  => 'https://lib.baomitu.com/mermaid/10.7.0/mermaid.esm.min.mjs',
+        'bootcdn'  => 'https://cdn.bootcdn.net/ajax/libs/mermaid/10.7.0/mermaid.esm.min.mjs'
     ];
     const CDN_SOURCE_MATHJAX = [
         'jsDelivr' => 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js',
@@ -56,10 +56,13 @@ class Plugin implements PluginInterface
         $elementMermaid = new Form\Element\Radio('is_available_mermaid', [self::RADIO_VALUE_DISABLE => _t('不开启'), self::RADIO_VALUE_AUTO => _t('开启（按需加载）'), self::RADIO_VALUE_FORCE => _t('开启（每次加载，pjax 主题建议选择此选项）')], self::RADIO_VALUE_AUTO, _t('是否开启 Mermaid 支持（支持自动识别，按需渲染，无需担心引入冗余资源）'), _t('开启后支持解析并渲染 <a href="https://mermaid-js.github.io/mermaid/#/">Mermaid</a>'));
         $form->addInput($elementMermaid);
 
+        $elementMermaidTheme = new Form\Element\Radio('mermaid_theme', ['default' => _t('默认（default）'), 'neutral' => _t('墨水（neutral）'), 'dark' => _t('暗黑（dark）'), 'forest' => _t('森林绿（forest）')], 'default', _t('Mermaid 主题颜色'), _t('可以去这里 <a href="https://mermaid.live/edit">实时编辑器</a>调整主题配置看下效果'));
+        $form->addInput($elementMermaidTheme);
+
         $elementMathJax = new Form\Element\Radio('is_available_mathjax', [self::RADIO_VALUE_DISABLE => _t('不开启'), self::RADIO_VALUE_AUTO => _t('开启（按需加载）'), self::RADIO_VALUE_FORCE => _t('开启（每次加载，pjax 主题建议选择此选项）')], self::RADIO_VALUE_AUTO, _t('是否开启 MathJax 支持（支持自动识别，按需渲染，无需担心引入冗余资源）'), _t('开启后支持解析并渲染 <a href="https://www.mathjax.org/">MathJax</a>'));
         $form->addInput($elementMathJax);
 
-        $elementCDNSource = new Form\Element\Radio('cdn_source', array_combine(array_keys(self::CDN_SOURCE_MERMAID), array_map('_t', array_keys(self::CDN_SOURCE_MERMAID))), self::CDN_SOURCE_DEFAULT);
+        $elementCDNSource = new Form\Element\Radio('cdn_source', array_combine(array_keys(self::CDN_SOURCE_MERMAID), array_map('_t', array_keys(self::CDN_SOURCE_MERMAID))), self::CDN_SOURCE_DEFAULT, _t('静态资源 CDN'), _t('jsDelivr 默认使用最新版本'));
         $form->addInput($elementCDNSource);
 
         $elementInternalHosts = new Form\Element\Text('internal_hosts', null, '', _t('设置内部链接'), _t('默认为本站点地址，支持正则表达式("/(^|\.)example\.com$/")，多个可用英文逗号分隔。<br/>外部链接解析策略：默认在新窗口中打开，并加上 "noopener noreferrer" 属性'));
@@ -86,24 +89,24 @@ class Plugin implements PluginInterface
 
     public static function resourceLink()
     {
+        $markdownParser     = MarkdownParse::getInstance();
         $configMermaid      = (int)Options::alloc()->plugin('MarkdownParse')->is_available_mermaid;
         $configLaTex        = (int)Options::alloc()->plugin('MarkdownParse')->is_available_mathjax;
         $configCDN          = (string)Options::alloc()->plugin('MarkdownParse')->cdn_source;
-        $markdownParser     = MarkdownParse::getInstance();
         $isAvailableMermaid = $configMermaid === self::RADIO_VALUE_FORCE || ($markdownParser->getIsNeedMermaid() && $configMermaid === self::RADIO_VALUE_AUTO);
         $isAvailableMathjax = $configLaTex   === self::RADIO_VALUE_FORCE || ($markdownParser->getIsNeedLaTex() && $configLaTex === self::RADIO_VALUE_AUTO);
 
-        $resourceContent = '';
+        $resourceContent  = '';
 
         if ($isAvailableMermaid) {
-            $resourceContent .= '<script type="text/javascript">function initMermaid(){mermaid.initialize({startOnLoad:true})}</script>';
-            $resourceContent .= sprintf('<script async defer type="text/javascript" src="%s"></script>', !empty(self::CDN_SOURCE_MERMAID[$configCDN]) ? self::CDN_SOURCE_MERMAID[$configCDN] : self::CDN_SOURCE_MERMAID[self::CDN_SOURCE_DEFAULT]);
+            $resourceContent .= sprintf('<script type="module">import mermaid from "%s";',self::CDN_SOURCE_MERMAID[$configCDN] ?: self::CDN_SOURCE_MERMAID[self::CDN_SOURCE_DEFAULT]);
+            $resourceContent .= sprintf('mermaid.initialize({ startOnLoad: true,theme:"%s"});</script>', (string)Options::alloc()->plugin('MarkdownParse')->mermaid_theme ?: 'default');
         }
 
         if ($isAvailableMathjax) {
             $resourceContent .= '<script type="text/javascript">(function(){MathJax={tex:{inlineMath:[[\'$\',\'$\'],[\'\\\\(\',\'\\\\)\']]}}})();</script>';
-            $resourceContent .= '<script async defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>';
-            $resourceContent .= sprintf('<script id="MathJax-script" async defer type="text/javascript" src="%s"></script>', !empty(self::CDN_SOURCE_MATHJAX[$configCDN]) ? self::CDN_SOURCE_MATHJAX[$configCDN] : self::CDN_SOURCE_MATHJAX[self::CDN_SOURCE_DEFAULT]);
+            $resourceContent .= '<script defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>';
+            $resourceContent .= sprintf('<script id="MathJax-script" defer type="text/javascript" src="%s"></script>', self::CDN_SOURCE_MATHJAX[$configCDN] ?: self::CDN_SOURCE_MATHJAX[self::CDN_SOURCE_DEFAULT]);
         }
 
         echo $resourceContent;
