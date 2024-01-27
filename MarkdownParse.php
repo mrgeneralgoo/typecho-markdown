@@ -21,6 +21,10 @@ use League\CommonMark\MarkdownConverter;
 use Wnx\CommonmarkMarkExtension\MarkExtension;
 use League\CommonMark\Extension\DefaultAttributes\DefaultAttributesExtension;
 use SimonVomEyser\CommonMarkExtension\LazyImageExtension;
+use League\CommonMark\Event\DocumentPreRenderEvent;
+use League\CommonMark\Node\Node;
+use League\CommonMark\Node\Query;
+use League\CommonMark\Node\Inline\Text;
 
 class MarkdownParse
 {
@@ -77,6 +81,24 @@ class MarkdownParse
 
         $environment = new Environment(array_merge($this->getConfig(), $config));
 
+        $environment->addEventListener(DocumentPreRenderEvent::class, function (DocumentPreRenderEvent $event) {
+            $document      = $event->getDocument();
+            $matchingNodes = (new Query())
+                ->where(Query::type(FencedCode::class))
+                ->andWhere(function (Node $node): bool {
+                    return $node->getInfo() === 'mermaid';
+                })
+                ->findAll($document);
+
+            foreach ($matchingNodes as $node) {
+                $divNode = new Text('<div class="' . $node->getInfo() . '">' . $node->getLiteral() . '</div>');
+                // foreach ($node->children() as $child) {
+                //     $divNode->appendChild($child);
+                // }
+                $node->replaceWith($divNode);
+            }
+        });
+
         $this->addCommonMarkExtensions($environment);
 
         $htmlContent = (new MarkdownConverter($environment))->convert($text)->getContent();
@@ -107,13 +129,13 @@ class MarkdownParse
 
         // Check if LaTeX is needed by searching for $$ or $ in the text
         if (!$this->isNeedLaTex) {
-            $this->isNeedLaTex = (bool) preg_match('/\${1,2}[^`]*?\${1,2}/m', $text);
+            $this->isNeedLaTex = (bool)preg_match('/\${1,2}[^`]*?\${1,2}/m', $text);
         }
 
         // Replace double $$ at the beginning and end of the text with <div> tags
-        $count             = 0;
-        $text              = preg_replace('/(^\${2,})(.*)(\${2,}$)/ms', '<div>$1$2$3</div>', $text, -1, $count);
-        $this->isNeedLaTex = $this->isNeedLaTex || $count > 0;
+        if ($this->isNeedLaTex) {
+            $text  = preg_replace('/(^\${2,})([\s\S]+?)(\${2,})/m', '<div>$1$2$3</div>', $text, -1);
+        }
 
         return [$text, $config];
     }
@@ -127,6 +149,8 @@ class MarkdownParse
      */
     public function postParse(string $htmlContent, array $config = []): array
     {
+        $htmlContent = htmlspecialchars_decode($htmlContent);
+
         // If LaTeX is needed, remove <div> tags added during preParse
         if ($this->isNeedLaTex) {
             $htmlContent = str_replace(['<div>$$', '$$</div>'], '$$', $htmlContent);
@@ -152,6 +176,9 @@ class MarkdownParse
             'external_link' => [
                 'internal_hosts'     => [],
                 'open_in_new_window' => true,
+            ],
+            'heading_permalink' => [
+                'symbol' => '',
             ],
             'default_attributes' => [
                 FencedCode::class => [
