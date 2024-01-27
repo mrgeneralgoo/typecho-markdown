@@ -177,6 +177,9 @@ class MarkdownParse
                 'internal_hosts'     => [],
                 'open_in_new_window' => true,
             ],
+            'heading_permalink' => [
+                'symbol' => '',
+            ],
             'default_attributes' => [
                 FencedCode::class => [
                     'class' => static function (FencedCode $node) use ($instance) {
