@@ -21,6 +21,10 @@ use League\CommonMark\MarkdownConverter;
 use Wnx\CommonmarkMarkExtension\MarkExtension;
 use League\CommonMark\Extension\DefaultAttributes\DefaultAttributesExtension;
 use SimonVomEyser\CommonMarkExtension\LazyImageExtension;
+use League\CommonMark\Event\DocumentPreRenderEvent;
+use League\CommonMark\Node\Node;
+use League\CommonMark\Node\Query;
+use League\CommonMark\Node\Inline\Text;
 
 class MarkdownParse
 {
@@ -77,6 +81,24 @@ class MarkdownParse
 
         $environment = new Environment(array_merge($this->getConfig(), $config));
 
+        $environment->addEventListener(DocumentPreRenderEvent::class, function (DocumentPreRenderEvent $event) {
+            $document      = $event->getDocument();
+            $matchingNodes = (new Query())
+                ->where(Query::type(FencedCode::class))
+                ->andWhere(function (Node $node): bool {
+                    return $node->getInfo() === 'mermaid';
+                })
+                ->findAll($document);
+
+            foreach ($matchingNodes as $node) {
+                $divNode = new Text('<div class="' . $node->getInfo() . '">' . $node->getLiteral() . '</div>');
+                // foreach ($node->children() as $child) {
+                //     $divNode->appendChild($child);
+                // }
+                $node->replaceWith($divNode);
+            }
+        });
+
         $this->addCommonMarkExtensions($environment);
 
         $htmlContent = (new MarkdownConverter($environment))->convert($text)->getContent();
@@ -127,6 +149,8 @@ class MarkdownParse
      */
     public function postParse(string $htmlContent, array $config = []): array
     {
+        $htmlContent = htmlspecialchars_decode($htmlContent);
+
         // If LaTeX is needed, remove <div> tags added during preParse
         if ($this->isNeedLaTex) {
             $htmlContent = str_replace(['<div>$$', '$$</div>'], '$$', $htmlContent);
