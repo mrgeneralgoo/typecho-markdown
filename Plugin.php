@@ -13,7 +13,7 @@ use Widget\Options;
  *
  * @author  mrgeneral
  * @package MarkdownParse
- * @version 2.0.0
+ * @version 2.1.0
  * @link    https://www.chengxiaobai.cn/
  */
 class Plugin implements PluginInterface
