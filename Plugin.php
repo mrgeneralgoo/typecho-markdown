@@ -22,18 +22,16 @@ class Plugin implements PluginInterface
     const RADIO_VALUE_AUTO    = 1;
     const RADIO_VALUE_FORCE   = 2;
 
-    const CDN_SOURCE_DEFAULT = 'jsDelivr';
+    const CDN_SOURCE_DEFAULT = 'baomitu';
     const CDN_SOURCE_MERMAID = [
         'jsDelivr' => 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs',
         'cdnjs'    => 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.7.0/mermaid.esm.min.mjs',
-        'baomitu'  => 'https://lib.baomitu.com/mermaid/10.7.0/mermaid.esm.min.mjs',
-        'bootcdn'  => 'https://cdn.bootcdn.net/ajax/libs/mermaid/10.7.0/mermaid.esm.min.mjs'
+        'baomitu'  => 'https://lib.baomitu.com/mermaid/10.7.0/mermaid.esm.min.mjs'
     ];
     const CDN_SOURCE_MATHJAX = [
         'jsDelivr' => 'https://cdn.jsdelivr.net/npm/mathjax/es5/tex-mml-chtml.min.js',
         'cdnjs'    => 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js',
-        'baomitu'  => 'https://lib.baomitu.com/mathjax/latest/es5/tex-mml-chtml.min.js',
-        'bootcdn'  => 'https://cdn.bootcdn.net/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js'
+        'baomitu'  => 'https://lib.baomitu.com/mathjax/latest/es5/tex-mml-chtml.min.js'
     ];
 
     public static function activate()
@@ -105,7 +103,7 @@ class Plugin implements PluginInterface
 
         if ($isAvailableMathjax) {
             $resourceContent .= '<script type="text/javascript">(function(){MathJax={tex:{inlineMath:[[\'$\',\'$\'],[\'\\\\(\',\'\\\\)\']]}}})();</script>';
-            $resourceContent .= '<script defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>';
+            $resourceContent .= '<script defer src="https://polyfill.alicdn.com/v3/polyfill.min.js?features=es6"></script>';
             $resourceContent .= sprintf('<script id="MathJax-script" defer type="text/javascript" src="%s"></script>', self::CDN_SOURCE_MATHJAX[$configCDN] ?: self::CDN_SOURCE_MATHJAX[self::CDN_SOURCE_DEFAULT]);
         }
 
