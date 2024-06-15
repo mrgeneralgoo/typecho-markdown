@@ -1,8 +1,8 @@
-version: '3.7'
-
 services:
   typecho:
     image: joyqi/typecho:nightly-php8.2-apache
+    # image: joyqi/typecho:1.2.1-php8.0-apache
+    # image: joyqi/typecho:1.2.0-php8.0-apache
     container_name: TYPECHO
     restart: always
     environment:
