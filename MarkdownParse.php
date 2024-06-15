@@ -81,24 +81,6 @@ class MarkdownParse
 
         $environment = new Environment(array_merge($this->getConfig(), $config));
 
-        $environment->addEventListener(DocumentPreRenderEvent::class, function (DocumentPreRenderEvent $event) {
-            $document      = $event->getDocument();
-            $matchingNodes = (new Query())
-                ->where(Query::type(FencedCode::class))
-                ->andWhere(function (Node $node): bool {
-                    return $node->getInfo() === 'mermaid';
-                })
-                ->findAll($document);
-
-            foreach ($matchingNodes as $node) {
-                $divNode = new Text('<div class="' . $node->getInfo() . '">' . $node->getLiteral() . '</div>');
-                // foreach ($node->children() as $child) {
-                //     $divNode->appendChild($child);
-                // }
-                $node->replaceWith($divNode);
-            }
-        });
-
         $this->addCommonMarkExtensions($environment);
 
         $htmlContent = (new MarkdownConverter($environment))->convert($text)->getContent();
@@ -149,7 +131,10 @@ class MarkdownParse
      */
     public function postParse(string $htmlContent, array $config = []): array
     {
-        $htmlContent = htmlspecialchars_decode($htmlContent);
+        // If Mermaid is needed, replace the class attribute of Mermaid code blocks
+        if ($this->isNeedMermaid) {
+            $htmlContent = str_replace(['<code class="language-mermaid">'], '<code class="mermaid">', $htmlContent);
+        }
 
         // If LaTeX is needed, remove <div> tags added during preParse
         if ($this->isNeedLaTex) {
@@ -186,7 +171,6 @@ class MarkdownParse
                         $infoWords = $node->getInfoWords();
                         if (\count($infoWords) !== 0 && $infoWords[0] === 'mermaid') {
                             $instance->setIsNeedMermaid(true);
-                            return 'mermaid';
                         }
                         return null;
                     },
