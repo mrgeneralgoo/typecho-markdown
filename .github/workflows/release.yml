@@ -8,21 +8,22 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up PHP
+      - name: Setup PHP
         id: setup-php
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
           extensions: mbstring
+          coverage: none
 
       - name: Install Composer Dependencies
         run: |
-          composer check-platform-reqs && composer install --no-dev --prefer-dist -o
+          composer check-platform-reqs
+          composer install --no-dev --prefer-dist -o
 
       - name: Create vendor.phar
         run: |
@@ -44,7 +45,8 @@ jobs:
 
       - name: Get Latest Release Version
         id: get_latest_release
-        run: echo "VERSION=$(curl -s https://api.github.com/repos/mrgeneralgoo/typecho-markdown/releases/latest | jq -r .tag_name)" >> $GITHUB_OUTPUT
+        run: |
+          echo "VERSION=$(curl -s https://api.github.com/repos/mrgeneralgoo/typecho-markdown/releases/latest | jq -r .tag_name)" >> $GITHUB_OUTPUT
 
       - name: Create Release
         uses: ncipollo/release-action@v1

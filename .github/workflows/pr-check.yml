@@ -1,0 +1,37 @@
+name: Pull Request Check
+
+on:
+  pull_request:
+    branches: [ main, master ]
+    types: [ opened, synchronize, reopened ]
+
+jobs:
+  compatibility-check:
+    name: PHP ${{ matrix.php-version }} Compatibility
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ['8.1', '8.2', '8.3']
+        
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: mbstring
+          coverage: none
+
+      - name: Check Platform Requirements
+        run: composer check-platform-reqs
+
+      - name: Install Dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Check PHP Syntax
+        run: |
+          find . -type f -name '*.php' -not -path "./vendor/*" -print0 | \
+          xargs -0 -n1 php -l
