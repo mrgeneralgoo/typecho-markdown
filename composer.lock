@@ -2171,16 +2171,16 @@
         },
         {
             "name": "wnx/commonmark-mark-extension",
-            "version": "v1.2.0",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stefanzweifel/commonmark-mark-extension.git",
-                "reference": "85c331bc202f90249655e3fa238a069833d897bc"
+                "reference": "b9d549cb66c79e99fc90a751b88637eee644d232"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stefanzweifel/commonmark-mark-extension/zipball/85c331bc202f90249655e3fa238a069833d897bc",
-                "reference": "85c331bc202f90249655e3fa238a069833d897bc",
+                "url": "https://api.github.com/repos/stefanzweifel/commonmark-mark-extension/zipball/b9d549cb66c79e99fc90a751b88637eee644d232",
+                "reference": "b9d549cb66c79e99fc90a751b88637eee644d232",
                 "shasum": ""
             },
             "require": {
@@ -2189,8 +2189,8 @@
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.0",
-                "phpunit/phpunit": "^9.5 | ^10",
-                "vimeo/psalm": "^5"
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^9.5 | ^10"
             },
             "type": "library",
             "autoload": {
@@ -2216,7 +2216,7 @@
                 "wnx"
             ],
             "support": {
-                "source": "https://github.com/stefanzweifel/commonmark-mark-extension/tree/v1.2.0"
+                "source": "https://github.com/stefanzweifel/commonmark-mark-extension/tree/v1.3.0"
             },
             "funding": [
                 {
@@ -2228,18 +2228,18 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-10-16T12:17:03+00:00"
+            "time": "2024-11-13T18:55:43+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.1"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
