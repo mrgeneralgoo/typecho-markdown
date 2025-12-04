@@ -2178,16 +2178,16 @@
         },
         {
             "name": "wnx/commonmark-mark-extension",
-            "version": "v1.3.0",
+            "version": "v1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stefanzweifel/commonmark-mark-extension.git",
-                "reference": "b9d549cb66c79e99fc90a751b88637eee644d232"
+                "reference": "316a295e75f8c7fd4deca85f865404d5c76b2c68"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stefanzweifel/commonmark-mark-extension/zipball/b9d549cb66c79e99fc90a751b88637eee644d232",
-                "reference": "b9d549cb66c79e99fc90a751b88637eee644d232",
+                "url": "https://api.github.com/repos/stefanzweifel/commonmark-mark-extension/zipball/316a295e75f8c7fd4deca85f865404d5c76b2c68",
+                "reference": "316a295e75f8c7fd4deca85f865404d5c76b2c68",
                 "shasum": ""
             },
             "require": {
@@ -2196,7 +2196,7 @@
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.0",
-                "phpstan/phpstan": "^1.10",
+                "phpstan/phpstan": "^2.0",
                 "phpunit/phpunit": "^9.5 | ^10"
             },
             "type": "library",
@@ -2223,7 +2223,7 @@
                 "wnx"
             ],
             "support": {
-                "source": "https://github.com/stefanzweifel/commonmark-mark-extension/tree/v1.3.0"
+                "source": "https://github.com/stefanzweifel/commonmark-mark-extension/tree/v1.4.0"
             },
             "funding": [
                 {
@@ -2235,7 +2235,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-11-13T18:55:43+00:00"
+            "time": "2025-11-23T20:23:43+00:00"
         }
     ],
     "packages-dev": [],
