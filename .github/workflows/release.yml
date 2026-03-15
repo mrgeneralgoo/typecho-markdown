@@ -49,7 +49,7 @@ jobs:
           echo "VERSION=$(curl -s https://api.github.com/repos/mrgeneralgoo/typecho-markdown/releases/latest | jq -r .tag_name)" >> $GITHUB_OUTPUT
 
       - name: Create Release
-        uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1
+        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1
         with:
           token: ${{ secrets.AUTO_RELEASE_TOKEN }}
           tag: ${{github.ref_name}}
