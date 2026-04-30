@@ -16,7 +16,6 @@ trait ResetSingletonsTrait
     {
         $reflection = new ReflectionClass(MarkdownParse::class);
         $instance = $reflection->getProperty('instance');
-        $instance->setAccessible(true);
         $instance->setValue(null, null);
     }
 
@@ -32,7 +31,6 @@ trait ResetSingletonsTrait
                 continue;
             }
 
-            $property->setAccessible(true);
             if ($property->isStatic()) {
                 $property->setValue(null, []);
             } else {

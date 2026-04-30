@@ -42,7 +42,6 @@ final class PluginTest extends TestCase
         // Common::nativeClassName('Widget\\Options') = 'Widget_Options'
         $reflection = new \ReflectionClass(\Typecho\Widget::class);
         $poolProp = $reflection->getProperty('widgetPool');
-        $poolProp->setAccessible(true);
         $pool = $poolProp->getValue();
         $pool['Widget_Options'] = $options;
         $poolProp->setValue(null, $pool);
