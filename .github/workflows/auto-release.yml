@@ -1,0 +1,136 @@
+name: Auto Release
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.AUTO_RELEASE_TOKEN }}
+
+      - name: Determine version bump
+        id: bump
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
+          echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+
+          COMMITS=$(git log "$LATEST_TAG"..HEAD --pretty=format:"%s" --no-merges)
+
+          if [ -z "$COMMITS" ]; then
+            echo "should_release=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Filter out bot commits (Renovate, dependabot)
+          COMMITS=$(echo "$COMMITS" | grep -v "^Update dependency\|^Bump \|^Pin dependencies\|^chore(deps)")
+
+          HAS_BREAKING=false
+          HAS_FEAT=false
+          HAS_FIX=false
+
+          while IFS= read -r msg; do
+            [ -z "$msg" ] && continue
+            if echo "$msg" | grep -qi "BREAKING CHANGE"; then
+              HAS_BREAKING=true
+            fi
+            if echo "$msg" | grep -qE "^feat(\(.+\))?:"; then
+              HAS_FEAT=true
+            fi
+            if echo "$msg" | grep -qE "^fix(\(.+\))?:"; then
+              HAS_FIX=true
+            fi
+          done <<< "$COMMITS"
+
+          # Also check commit bodies for BREAKING CHANGE
+          BODIES=$(git log "$LATEST_TAG"..HEAD --pretty=format:"%b" --no-merges)
+          if echo "$BODIES" | grep -qi "BREAKING CHANGE"; then
+            HAS_BREAKING=true
+          fi
+
+          if [ "$HAS_BREAKING" = false ] && [ "$HAS_FEAT" = false ] && [ "$HAS_FIX" = false ]; then
+            echo "should_release=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$LATEST_TAG"
+
+          if [ "$HAS_BREAKING" = true ]; then
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+          elif [ "$HAS_FEAT" = true ]; then
+            MINOR=$((MINOR + 1))
+            PATCH=0
+          else
+            PATCH=$((PATCH + 1))
+          fi
+
+          NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "should_release=true" >> $GITHUB_OUTPUT
+
+      - name: Update Plugin.php version
+        if: steps.bump.outputs.should_release == 'true'
+        run: |
+          sed -i "s/@version .*/@version ${{ steps.bump.outputs.new_version }}/" Plugin.php
+
+      - name: Commit and tag
+        if: steps.bump.outputs.should_release == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Plugin.php
+          git commit -m "release: ${{ steps.bump.outputs.new_version }} [skip ci]"
+          git tag -a "${{ steps.bump.outputs.new_version }}" -m "release: ${{ steps.bump.outputs.new_version }}"
+          git push origin master --tags
+
+      - name: Setup PHP
+        if: steps.bump.outputs.should_release == 'true'
+        uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring
+          coverage: none
+
+      - name: Install Composer Dependencies
+        if: steps.bump.outputs.should_release == 'true'
+        run: |
+          composer check-platform-reqs
+          composer install --no-dev --prefer-dist -o
+
+      - name: Create vendor.phar
+        if: steps.bump.outputs.should_release == 'true'
+        run: |
+          mkdir temp
+          cp -r vendor temp/
+          cp composer.json temp/
+          cp MarkdownParse.php temp/
+          php -d phar.readonly=0 vendor/bin/phar-composer build temp vendor.phar
+
+      - name: Package Files
+        if: steps.bump.outputs.should_release == 'true'
+        run: |
+          rm -rf vendor/
+          mkdir MarkdownParse
+          mv vendor.phar MarkdownParse/
+          cp LICENSE.md MarkdownParse/
+          cp Plugin.php MarkdownParse/
+          cp README.md MarkdownParse/
+          zip -r MarkdownParse.zip MarkdownParse
+
+      - name: Create Release
+        if: steps.bump.outputs.should_release == 'true'
+        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1
+        with:
+          token: ${{ secrets.AUTO_RELEASE_TOKEN }}
+          tag: ${{ steps.bump.outputs.new_version }}
+          artifacts: "MarkdownParse.zip"
+          body: |
+            **Full Changelog**: https://github.com/mrgeneralgoo/typecho-markdown/compare/${{ steps.bump.outputs.latest_tag }}...${{ steps.bump.outputs.new_version }})
