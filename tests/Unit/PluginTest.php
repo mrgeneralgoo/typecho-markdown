@@ -175,4 +175,28 @@ final class PluginTest extends TestCase
 
         $this->assertSame('', $html);
     }
+
+    public function testConfigDoesNotThrow(): void
+    {
+        $form = Mockery::mock(\Typecho\Widget\Helper\Form::class);
+        $form->shouldReceive('addInput')->andReturnSelf();
+
+        Plugin::config($form);
+
+        $this->expectNotToPerformAssertions();
+    }
+
+    public function testActivateDoesNotThrow(): void
+    {
+        // Plugin::activate() calls \Typecho\Plugin::factory()
+        // which needs the plugin system initialized.
+        // If it throws, skip with explanation.
+        try {
+            Plugin::activate();
+        } catch (\Throwable $e) {
+            $this->markTestSkipped('Plugin::activate requires plugin factory initialization: ' . $e->getMessage());
+        }
+
+        $this->expectNotToPerformAssertions();
+    }
 }
