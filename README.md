@@ -1,6 +1,11 @@
 Markdown Plugin for Typecho
 =========================
 
+[![Latest Release](https://img.shields.io/github/v/release/mrgeneralgoo/typecho-markdown)](https://github.com/mrgeneralgoo/typecho-markdown/releases)
+[![Tests](https://img.shields.io/github/actions/workflow/status/mrgeneralgoo/typecho-markdown/pr-check.yml?label=tests)](https://github.com/mrgeneralgoo/typecho-markdown/actions)
+[![PHP Version](https://img.shields.io/badge/PHP-8.5-green)](https://www.php.net)
+[![Typecho](https://img.shields.io/badge/Typecho-1.3-green)](https://github.com/typecho/typecho/releases)
+
 MarkdownParse 是一款基于 [league/commonmark](https://commonmark.thephpleague.com) 的 Typecho Markdown 解析插件，它的特色在于完美符合 [CommonMark](https://spec.commonmark.org) 和 GFM（[GitHub-Flavored Markdown](https://github.github.com/gfm/)）规范，不仅可以为你提供强大而丰富的功能，同时也能确保你的内容在不同平台上都能展现一致的出色效果。
 
 本插件除了支持 CommonMark 和 GFM 规范内提到的功能（目录、表格、任务列表、脚标等等），MarkdownParse 还具有以下额外特性：
