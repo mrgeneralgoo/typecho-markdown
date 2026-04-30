@@ -132,4 +132,22 @@ final class MarkdownParseTest extends TestCase
         }
         $this->assertFalse($this->parser->getIsNeedLaTex());
     }
+
+    public function testTocRendersWhenEnabled(): void
+    {
+        $this->parser->setIsTocEnable(true);
+        $html = $this->parser->parse(Fixtures::load('toc-multi-level.md'));
+
+        $this->assertStringContainsString('<ul>', $html);
+        $this->assertStringContainsString('Chapter 1', $html);
+        $this->assertStringContainsString('Section 1.1', $html);
+        $this->assertStringNotContainsString('[TOC]', $html);
+    }
+
+    public function testTocNotRenderedWhenDisabled(): void
+    {
+        $html = $this->parser->parse(Fixtures::load('toc-multi-level.md'));
+        // When TOC is disabled, [TOC] remains as literal text and is not replaced
+        $this->assertStringContainsString('[TOC]', $html);
+    }
 }
