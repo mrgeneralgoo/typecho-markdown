@@ -69,3 +69,4 @@ foreach ($required as $name) {
 }
 
 require_once __DIR__ . '/../MarkdownParse.php';
+require_once __DIR__ . '/../Plugin.php';
