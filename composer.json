@@ -5,5 +5,12 @@
         "wnx/commonmark-mark-extension": "^1.2",
         "simonvomeyser/commonmark-ext-lazy-image": "^2.0",
         "clue/phar-composer": "^1.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5",
+        "mockery/mockery": "^1.6"
+    },
+    "scripts": {
+        "test": "phpunit"
     }
 }
