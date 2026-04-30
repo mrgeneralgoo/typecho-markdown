@@ -7,13 +7,18 @@ on:
 
 jobs:
   compatibility-check:
-    name: PHP ${{ matrix.php-version }} Compatibility
+    name: PHP ${{ matrix.php-version }} / Typecho ${{ matrix.typecho-version }}
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.continue-on-error || false }}
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.1', '8.2', '8.3', '8.4', '8.5']
-        
+        php-version: ['8.2', '8.3', '8.4', '8.5']
+        typecho-version: ['v1.2.0', 'v1.3.0', 'master']
+        include:
+          - typecho-version: master
+            continue-on-error: true
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -33,5 +38,16 @@ jobs:
 
       - name: Check PHP Syntax
         run: |
-          find . -type f -name '*.php' -not -path "./vendor/*" -print0 | \
+          find . -type f -name '*.php' -not -path "./vendor/*" -not -path "./tests/.typecho/*" -print0 | \
           xargs -0 -n1 php -l
+
+      - name: Cache Typecho source
+        uses: actions/cache@v4
+        with:
+          path: tests/.typecho
+          key: typecho-${{ matrix.typecho-version }}-${{ hashFiles('tests/bootstrap.php') }}
+
+      - name: Run PHPUnit
+        env:
+          TYPECHO_VERSION: ${{ matrix.typecho-version }}
+        run: composer test
