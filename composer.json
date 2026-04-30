@@ -10,6 +10,11 @@
         "phpunit/phpunit": "^10.5",
         "mockery/mockery": "^1.6"
     },
+    "autoload-dev": {
+        "psr-4": {
+            "TypechoPlugin\\MarkdownParse\\Tests\\": "tests/"
+        }
+    },
     "scripts": {
         "test": "phpunit"
     }
