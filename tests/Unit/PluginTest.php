@@ -74,4 +74,105 @@ final class PluginTest extends TestCase
         // External link should get rel attributes
         $this->assertStringContainsString('rel="', $html);
     }
+
+    public function testResourceLinkEmitsMermaidWhenForceEnabled(): void
+    {
+        $this->mockOptions([
+            'is_available_toc'      => 0,
+            'internal_hosts'        => '',
+            'is_available_mermaid'  => 2,
+            'is_available_mathjax'  => 0,
+            'cdn_source'            => 'baomitu',
+            'mermaid_theme'         => 'default',
+        ]);
+
+        ob_start();
+        Plugin::resourceLink();
+        $html = ob_get_clean();
+
+        $this->assertStringContainsString('<script type="module">', $html);
+        $this->assertStringContainsString('mermaid.initialize', $html);
+        $this->assertStringContainsString('lib.baomitu.com/mermaid', $html);
+    }
+
+    public function testResourceLinkEmitsMermaidOnAutoWhenContentNeedsIt(): void
+    {
+        $this->mockOptions([
+            'is_available_toc'      => 0,
+            'internal_hosts'        => '',
+            'is_available_mermaid'  => 1,
+            'is_available_mathjax'  => 0,
+            'cdn_source'            => 'jsDelivr',
+            'mermaid_theme'         => 'forest',
+        ]);
+
+        Plugin::parse("```mermaid\ngraph TD\nA-->B\n```\n");
+
+        ob_start();
+        Plugin::resourceLink();
+        $html = ob_get_clean();
+
+        $this->assertStringContainsString('<script type="module">', $html);
+        $this->assertStringContainsString('cdn.jsdelivr.net/npm/mermaid', $html);
+        $this->assertStringContainsString('"forest"', $html);
+    }
+
+    public function testResourceLinkOmitsMermaidWhenDisabled(): void
+    {
+        $this->mockOptions([
+            'is_available_toc'      => 0,
+            'internal_hosts'        => '',
+            'is_available_mermaid'  => 0,
+            'is_available_mathjax'  => 0,
+            'cdn_source'            => 'baomitu',
+            'mermaid_theme'         => 'default',
+        ]);
+
+        Plugin::parse("```mermaid\ngraph TD\nA-->B\n```\n");
+
+        ob_start();
+        Plugin::resourceLink();
+        $html = ob_get_clean();
+
+        $this->assertSame('', $html);
+    }
+
+    public function testResourceLinkEmitsMathjaxOnAutoWhenInlineMathPresent(): void
+    {
+        $this->mockOptions([
+            'is_available_toc'      => 0,
+            'internal_hosts'        => '',
+            'is_available_mermaid'  => 0,
+            'is_available_mathjax'  => 1,
+            'cdn_source'            => 'cdnjs',
+            'mermaid_theme'         => 'default',
+        ]);
+
+        Plugin::parse('inline $x = 1$');
+
+        ob_start();
+        Plugin::resourceLink();
+        $html = ob_get_clean();
+
+        $this->assertStringContainsString('MathJax', $html);
+        $this->assertStringContainsString('cdnjs.cloudflare.com/ajax/libs/mathjax', $html);
+    }
+
+    public function testResourceLinkEmitsNothingWhenAllDisabled(): void
+    {
+        $this->mockOptions([
+            'is_available_toc'      => 0,
+            'internal_hosts'        => '',
+            'is_available_mermaid'  => 0,
+            'is_available_mathjax'  => 0,
+            'cdn_source'            => 'baomitu',
+            'mermaid_theme'         => 'default',
+        ]);
+
+        ob_start();
+        Plugin::resourceLink();
+        $html = ob_get_clean();
+
+        $this->assertSame('', $html);
+    }
 }
