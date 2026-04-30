@@ -1,4 +1,6 @@
-tests/usr
 vendor
 vendor.phar
 .worktrees
+tests/.typecho
+.phpunit.cache
+.phpunit.result.cache
