@@ -82,4 +82,23 @@ final class MarkdownParseTest extends TestCase
         $this->assertStringContainsString('<dt>term</dt>', $html);
         $this->assertStringContainsString('<dd>definition</dd>', $html);
     }
+
+    public function testMermaidCodeBlockGetsClassMermaid(): void
+    {
+        $md = Fixtures::load('mermaid-flowchart.md');
+        $html = $this->parser->parse($md);
+
+        $this->assertStringContainsString('<code class="mermaid">', $html);
+        $this->assertStringNotContainsString('class="language-mermaid"', $html);
+        $this->assertTrue($this->parser->getIsNeedMermaid());
+    }
+
+    public function testNonMermaidFencedBlockUntouched(): void
+    {
+        $md = "```python\nprint(1)\n```\n";
+        $html = $this->parser->parse($md);
+
+        $this->assertStringContainsString('class="language-python"', $html);
+        $this->assertFalse($this->parser->getIsNeedMermaid());
+    }
 }
