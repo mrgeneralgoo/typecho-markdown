@@ -21,7 +21,11 @@ jobs:
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
           echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
 
-          COMMITS=$(git log "$LATEST_TAG"..HEAD --pretty=format:"%s" --no-merges)
+          if [ "$LATEST_TAG" = "0.0.0" ]; then
+            COMMITS=$(git log HEAD --pretty=format:"%s" --no-merges)
+          else
+            COMMITS=$(git log "$LATEST_TAG"..HEAD --pretty=format:"%s" --no-merges)
+          fi
 
           if [ -z "$COMMITS" ]; then
             echo "should_release=false" >> $GITHUB_OUTPUT
@@ -49,7 +53,11 @@ jobs:
           done <<< "$COMMITS"
 
           # Also check commit bodies for BREAKING CHANGE
-          BODIES=$(git log "$LATEST_TAG"..HEAD --pretty=format:"%b" --no-merges)
+          if [ "$LATEST_TAG" = "0.0.0" ]; then
+            BODIES=$(git log HEAD --pretty=format:"%b" --no-merges)
+          else
+            BODIES=$(git log "$LATEST_TAG"..HEAD --pretty=format:"%b" --no-merges)
+          fi
           if echo "$BODIES" | grep -qi "BREAKING CHANGE"; then
             HAS_BREAKING=true
           fi
