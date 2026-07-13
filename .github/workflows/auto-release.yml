@@ -33,11 +33,23 @@ jobs:
           fi
 
           # Filter out bot commits (Renovate, dependabot)
-          COMMITS=$(echo "$COMMITS" | grep -v "^Update dependency\|^Bump \|^Pin dependencies\|^chore(deps)")
+          COMMITS=$(echo "$COMMITS" | grep -v "^Update dependency\|^Bump \|^Pin dependencies\|^chore(deps)" || true)
 
           HAS_BREAKING=false
           HAS_FEAT=false
           HAS_FIX=false
+          HAS_DEPS=false
+
+          # Runtime dependency updates (composer.json/composer.lock) warrant a patch release,
+          # even when the commits themselves are filtered-out bot commits
+          if [ "$LATEST_TAG" = "0.0.0" ]; then
+            CHANGED_FILES=$(git log HEAD --pretty=format: --name-only --no-merges)
+          else
+            CHANGED_FILES=$(git diff --name-only "$LATEST_TAG"..HEAD)
+          fi
+          if echo "$CHANGED_FILES" | grep -qE "^composer\.(json|lock)$"; then
+            HAS_DEPS=true
+          fi
 
           while IFS= read -r msg; do
             [ -z "$msg" ] && continue
@@ -62,7 +74,7 @@ jobs:
             HAS_BREAKING=true
           fi
 
-          if [ "$HAS_BREAKING" = false ] && [ "$HAS_FEAT" = false ] && [ "$HAS_FIX" = false ]; then
+          if [ "$HAS_BREAKING" = false ] && [ "$HAS_FEAT" = false ] && [ "$HAS_FIX" = false ] && [ "$HAS_DEPS" = false ]; then
             echo "should_release=false" >> $GITHUB_OUTPUT
             exit 0
           fi
