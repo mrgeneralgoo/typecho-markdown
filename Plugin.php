@@ -15,7 +15,7 @@ use Widget\Options;
  *
  * @author  mrgeneral
  * @package MarkdownParse
- * @version 2.7.4
+ * @version 2.7.5
  * @link    https://www.chengxiaobai.cn/
  */
 class Plugin implements PluginInterface
