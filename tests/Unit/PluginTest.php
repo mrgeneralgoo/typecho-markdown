@@ -116,6 +116,28 @@ final class PluginTest extends TestCase
         $this->assertStringContainsString('"forest"', $html);
     }
 
+    public function testResourceLinkMermaidAutoUsesCustomDarkSelector(): void
+    {
+        $this->mockOptions([
+            'is_available_toc'        => 0,
+            'internal_hosts'          => '',
+            'is_available_mermaid'    => 2,
+            'is_available_mathjax'    => 0,
+            'cdn_source'              => 'baomitu',
+            'mermaid_theme'           => 'auto',
+            'mermaid_dark_selector'   => '.night',
+        ]);
+
+        ob_start();
+        Plugin::resourceLink();
+        $html = ob_get_clean();
+
+        $this->assertStringContainsString('"auto":true', $html);
+        $this->assertStringContainsString('"default"', $html);
+        $this->assertStringContainsString('.night', $html);
+        $this->assertStringContainsString('mermaid.initialize', $html);
+    }
+
     public function testResourceLinkOmitsMermaidWhenDisabled(): void
     {
         $this->mockOptions([
