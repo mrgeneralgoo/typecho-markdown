@@ -133,9 +133,102 @@ final class PluginTest extends TestCase
         $html = ob_get_clean();
 
         $this->assertStringContainsString('"auto":true', $html);
-        $this->assertStringContainsString('"default"', $html);
-        $this->assertStringContainsString('.night', $html);
+        $this->assertStringContainsString('"lightTheme":"default"', $html);
+        $this->assertStringContainsString('"darkTheme":"dark"', $html);
+        $this->assertStringContainsString('"darkSelector":".night"', $html);
         $this->assertStringContainsString('mermaid.initialize', $html);
+    }
+
+    public function testResourceLinkMermaidAutoSupportsSeparateLightAndDarkThemes(): void
+    {
+        $this->mockOptions([
+            'is_available_toc'        => 0,
+            'internal_hosts'          => '',
+            'is_available_mermaid'    => 2,
+            'is_available_mathjax'    => 0,
+            'cdn_source'              => 'baomitu',
+            'mermaid_theme'           => 'auto',
+            'mermaid_light_theme'     => 'neutral',
+            'mermaid_dark_theme'      => 'forest',
+            'mermaid_dark_selector'   => '   ',
+        ]);
+
+        ob_start();
+        Plugin::resourceLink();
+        $html = ob_get_clean();
+
+        $this->assertStringContainsString('"auto":true', $html);
+        $this->assertStringContainsString('"lightTheme":"neutral"', $html);
+        $this->assertStringContainsString('"darkTheme":"forest"', $html);
+        $this->assertStringContainsString(
+            '"darkSelector":' . json_encode(Plugin::DEFAULT_MERMAID_DARK_SELECTOR, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE),
+            $html
+        );
+    }
+
+    public function testResourceLinkMermaidManualThemeDisablesAutoSwitching(): void
+    {
+        $this->mockOptions([
+            'is_available_toc'        => 0,
+            'internal_hosts'          => '',
+            'is_available_mermaid'    => 2,
+            'is_available_mathjax'    => 0,
+            'cdn_source'              => 'baomitu',
+            'mermaid_theme'           => 'neutral',
+            'mermaid_light_theme'     => 'forest',
+            'mermaid_dark_theme'      => 'dark',
+        ]);
+
+        ob_start();
+        Plugin::resourceLink();
+        $html = ob_get_clean();
+
+        $this->assertStringContainsString('"auto":false', $html);
+        $this->assertStringContainsString('"lightTheme":"neutral"', $html);
+    }
+
+    public function testResourceLinkMermaidFallsBackOnEmptyOrInvalidOptions(): void
+    {
+        $this->mockOptions([
+            'is_available_toc'        => 0,
+            'internal_hosts'          => '',
+            'is_available_mermaid'    => 2,
+            'is_available_mathjax'    => 0,
+            'cdn_source'              => 'unknown_cdn',
+            'mermaid_theme'           => '',
+            'mermaid_light_theme'     => 'invalid_light',
+            'mermaid_dark_theme'      => 'invalid_dark',
+        ]);
+
+        ob_start();
+        Plugin::resourceLink();
+        $html = ob_get_clean();
+
+        $this->assertStringContainsString('"auto":true', $html);
+        $this->assertStringContainsString('"lightTheme":"default"', $html);
+        $this->assertStringContainsString('"darkTheme":"dark"', $html);
+        $this->assertStringContainsString('lib.baomitu.com/mermaid', $html);
+    }
+
+    public function testResourceLinkMermaidEscapesScriptClosingTagInDarkSelector(): void
+    {
+        $this->mockOptions([
+            'is_available_toc'        => 0,
+            'internal_hosts'          => '',
+            'is_available_mermaid'    => 2,
+            'is_available_mathjax'    => 0,
+            'cdn_source'              => 'baomitu',
+            'mermaid_theme'           => 'auto',
+            'mermaid_dark_selector'   => '</script><script>alert(1)</script>',
+        ]);
+
+        ob_start();
+        Plugin::resourceLink();
+        $html = ob_get_clean();
+
+        $this->assertStringNotContainsString('</script><script>', $html);
+        $this->assertSame(1, substr_count(strtolower($html), '</script>'));
+        $this->assertStringContainsString('\u003C\/script\u003E', $html);
     }
 
     public function testResourceLinkOmitsMermaidWhenDisabled(): void
@@ -199,12 +292,20 @@ final class PluginTest extends TestCase
 
     public function testConfigDoesNotThrow(): void
     {
+        $registeredNames = [];
         $form = Mockery::mock(\Typecho\Widget\Helper\Form::class);
-        $form->shouldReceive('addInput')->andReturnSelf();
+        $form->shouldReceive('addInput')
+            ->andReturnUsing(static function ($element) use (&$registeredNames, $form) {
+                $registeredNames[] = $element->name;
+                return $form;
+            });
 
         Plugin::config($form);
 
-        $this->expectNotToPerformAssertions();
+        $this->assertContains('mermaid_theme', $registeredNames);
+        $this->assertContains('mermaid_light_theme', $registeredNames);
+        $this->assertContains('mermaid_dark_theme', $registeredNames);
+        $this->assertContains('mermaid_dark_selector', $registeredNames);
     }
 
     public function testActivateDoesNotThrow(): void
