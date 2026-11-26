@@ -35,6 +35,16 @@ class Plugin implements PluginInterface
         'cdnjs'    => 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js',
         'baomitu'  => 'https://lib.baomitu.com/mathjax/latest/es5/tex-mml-chtml.min.js'
     ];
+    const MERMAID_THEME_DEFAULT      = 'default';
+    const MERMAID_DARK_THEME_DEFAULT = 'dark';
+    const MERMAID_DARK_THEME_DISABLE = 'none';
+    const MERMAID_THEMES             = [
+        'default' => '默认（default）',
+        'neutral' => '墨水（neutral）',
+        'dark'    => '暗黑（dark）',
+        'forest'  => '森林绿（forest）',
+    ];
+    const DEFAULT_MERMAID_DARK_SELECTOR = 'html[data-theme="dark"], body[data-theme="dark"], html[data-color-mode="dark"], body[data-color-mode="dark"], html.dark, body.dark';
 
     public static function activate()
     {
@@ -56,8 +66,34 @@ class Plugin implements PluginInterface
         $elementMermaid = new Form\Element\Radio('is_available_mermaid', [self::RADIO_VALUE_DISABLE => _t('不开启'), self::RADIO_VALUE_AUTO => _t('开启（按需加载）'), self::RADIO_VALUE_FORCE => _t('开启（每次加载，pjax 主题建议选择此选项）')], self::RADIO_VALUE_AUTO, _t('是否开启 Mermaid 支持（支持自动识别，按需渲染，无需担心引入冗余资源）'), _t('开启后支持解析并渲染 <a href="https://mermaid-js.github.io/mermaid/#/">Mermaid</a>'));
         $form->addInput($elementMermaid);
 
-        $elementMermaidTheme = new Form\Element\Radio('mermaid_theme', ['default' => _t('默认（default）'), 'neutral' => _t('墨水（neutral）'), 'dark' => _t('暗黑（dark）'), 'forest' => _t('森林绿（forest）')], 'default', _t('Mermaid 主题颜色'), _t('可以去这里 <a href="https://mermaid.live/edit">实时编辑器</a>调整主题配置看下效果'));
+        $mermaidThemes = array_map('_t', self::MERMAID_THEMES);
+
+        $elementMermaidTheme = new Form\Element\Radio(
+            'mermaid_theme',
+            $mermaidThemes,
+            self::MERMAID_THEME_DEFAULT,
+            _t('Mermaid 日间（默认）模式主题'),
+            _t('站点日常（或浅色模式）下使用的主题；可以去这里 <a href="https://mermaid.live/edit">实时编辑器</a>调整主题配置看下效果')
+        );
         $form->addInput($elementMermaidTheme);
+
+        $elementMermaidDarkTheme = new Form\Element\Radio(
+            'mermaid_dark_theme',
+            [self::MERMAID_DARK_THEME_DISABLE => _t('不开启（与日间模式保持一致）')] + $mermaidThemes,
+            self::MERMAID_DARK_THEME_DEFAULT,
+            _t('Mermaid 夜间（深色）模式主题'),
+            _t('开启后，站点处于深色模式时自动切换为所选主题')
+        );
+        $form->addInput($elementMermaidDarkTheme);
+
+        $elementMermaidDarkSelector = new Form\Element\Text(
+            'mermaid_dark_selector',
+            null,
+            '',
+            _t('深色模式选择器'),
+            _t('仅在开启夜间（深色）模式主题切换时生效。任一元素匹配该 CSS 选择器即视为深色模式，支持逗号分隔多个选择器；留空使用默认值 <code>' . htmlspecialchars(self::DEFAULT_MERMAID_DARK_SELECTOR, ENT_QUOTES, 'UTF-8') . '</code>')
+        );
+        $form->addInput($elementMermaidDarkSelector);
 
         $elementMathJax = new Form\Element\Radio('is_available_mathjax', [self::RADIO_VALUE_DISABLE => _t('不开启'), self::RADIO_VALUE_AUTO => _t('开启（按需加载）'), self::RADIO_VALUE_FORCE => _t('开启（每次加载，pjax 主题建议选择此选项）')], self::RADIO_VALUE_AUTO, _t('是否开启 MathJax 支持（支持自动识别，按需渲染，无需担心引入冗余资源）'), _t('开启后支持解析并渲染 <a href="https://www.mathjax.org/">MathJax</a>'));
         $form->addInput($elementMathJax);
@@ -80,35 +116,133 @@ class Plugin implements PluginInterface
     public static function parse($text)
     {
         $markdownParser = MarkdownParse::getInstance();
+        $pluginOptions  = Options::alloc()->plugin('MarkdownParse');
 
-        $markdownParser->setIsTocEnable((bool)Options::alloc()->plugin('MarkdownParse')->is_available_toc);
-        $markdownParser->setInternalHosts((string)Options::alloc()->plugin('MarkdownParse')->internal_hosts ?: parse_url(Options::alloc()->siteUrl, PHP_URL_HOST));
+        $markdownParser->setIsTocEnable((bool)($pluginOptions->is_available_toc ?? false));
+        $markdownParser->setInternalHosts((string)($pluginOptions->internal_hosts ?? '') ?: parse_url(Options::alloc()->siteUrl, PHP_URL_HOST));
 
         return $markdownParser->parse($text);
     }
 
     public static function resourceLink()
     {
-        $markdownParser     = MarkdownParse::getInstance();
-        $configMermaid      = (int)Options::alloc()->plugin('MarkdownParse')->is_available_mermaid;
-        $configLaTex        = (int)Options::alloc()->plugin('MarkdownParse')->is_available_mathjax;
-        $configCDN          = (string)Options::alloc()->plugin('MarkdownParse')->cdn_source;
-        $isAvailableMermaid = $configMermaid === self::RADIO_VALUE_FORCE || ($markdownParser->getIsNeedMermaid() && $configMermaid === self::RADIO_VALUE_AUTO);
-        $isAvailableMathjax = $configLaTex   === self::RADIO_VALUE_FORCE || ($markdownParser->getIsNeedLaTex() && $configLaTex === self::RADIO_VALUE_AUTO);
+        $markdownParser = MarkdownParse::getInstance();
+        $pluginOptions  = Options::alloc()->plugin('MarkdownParse');
+        $cdnSource      = (string)($pluginOptions->cdn_source ?? '');
 
-        $resourceContent  = '';
+        $resourceContent = '';
 
-        if ($isAvailableMermaid) {
-            $resourceContent .= sprintf('<script type="module">import mermaid from "%s";',self::CDN_SOURCE_MERMAID[$configCDN] ?: self::CDN_SOURCE_MERMAID[self::CDN_SOURCE_DEFAULT]);
-            $resourceContent .= sprintf('mermaid.initialize({ startOnLoad: true,theme:"%s"});</script>', (string)Options::alloc()->plugin('MarkdownParse')->mermaid_theme ?: 'default');
+        if (self::shouldLoadResource((int)($pluginOptions->is_available_mermaid ?? self::RADIO_VALUE_DISABLE), $markdownParser->getIsNeedMermaid())) {
+            $mermaidUrl       = self::CDN_SOURCE_MERMAID[$cdnSource] ?? self::CDN_SOURCE_MERMAID[self::CDN_SOURCE_DEFAULT];
+            $resourceContent .= self::buildMermaidScript($mermaidUrl, self::resolveMermaidOptions($pluginOptions));
         }
 
-        if ($isAvailableMathjax) {
-            $resourceContent .= '<script type="text/javascript">(function(){MathJax={loader: {load: [\'[tex]/gensymb\']},tex:{inlineMath:[[\'$\',\'$\'],[\'\\\\(\',\'\\\\)\']],packages: {\'[+]\': [\'gensymb\']}}}})();</script>';
-            $resourceContent .= '<script defer src="https://polyfill.alicdn.com/v3/polyfill.min.js?features=es6"></script>';
-            $resourceContent .= sprintf('<script id="MathJax-script" defer type="text/javascript" src="%s"></script>', self::CDN_SOURCE_MATHJAX[$configCDN] ?: self::CDN_SOURCE_MATHJAX[self::CDN_SOURCE_DEFAULT]);
+        if (self::shouldLoadResource((int)($pluginOptions->is_available_mathjax ?? self::RADIO_VALUE_DISABLE), $markdownParser->getIsNeedLaTex())) {
+            $mathJaxUrl       = self::CDN_SOURCE_MATHJAX[$cdnSource] ?? self::CDN_SOURCE_MATHJAX[self::CDN_SOURCE_DEFAULT];
+            $resourceContent .= self::buildMathJaxScript($mathJaxUrl);
         }
 
         echo $resourceContent;
+    }
+
+    private static function shouldLoadResource(int $mode, bool $isNeeded): bool
+    {
+        return $mode === self::RADIO_VALUE_FORCE
+            || ($mode === self::RADIO_VALUE_AUTO && $isNeeded);
+    }
+
+    private static function resolveMermaidOptions($pluginOptions): array
+    {
+        $lightOption = (string)($pluginOptions->mermaid_theme ?? '');
+        $lightTheme  = isset(self::MERMAID_THEMES[$lightOption])
+            ? $lightOption
+            : self::MERMAID_THEME_DEFAULT;
+
+        $darkOption = (string)($pluginOptions->mermaid_dark_theme ?? self::MERMAID_DARK_THEME_DISABLE);
+        $darkTheme  = isset(self::MERMAID_THEMES[$darkOption])
+            ? $darkOption
+            : $lightTheme;
+
+        $darkSelector = trim((string)($pluginOptions->mermaid_dark_selector ?? ''))
+            ?: self::DEFAULT_MERMAID_DARK_SELECTOR;
+
+        return [
+            'lightTheme'   => $lightTheme,
+            'darkTheme'    => $darkTheme,
+            'darkSelector' => $darkSelector,
+        ];
+    }
+
+    private static function buildMermaidScript(string $cdnUrl, array $options): string
+    {
+        if ($options['lightTheme'] === $options['darkTheme']) {
+            return sprintf(
+                '<script type="module">import mermaid from "%s";mermaid.initialize({ startOnLoad: true, theme: %s });</script>',
+                $cdnUrl,
+                json_encode($options['lightTheme'], JSON_HEX_TAG | JSON_HEX_AMP)
+            );
+        }
+
+        $encodedConfig = json_encode($options, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
+
+        $runtimeScript = <<<'JS'
+const config = __MERMAID_CONFIG__;
+const isDarkMode = () => {
+  try {
+    return Boolean(document.querySelector(config.darkSelector));
+  } catch {
+    return false;
+  }
+};
+const resolveTheme = () => isDarkMode() ? config.darkTheme : config.lightTheme;
+const readSource = (el) => {
+  if (el.dataset.mermaidSource === undefined) {
+    if (el.hasAttribute('data-processed') || el.querySelector('svg')) return '';
+    el.dataset.mermaidSource = el.textContent || '';
+  }
+  return el.dataset.mermaidSource.trim() ? el.dataset.mermaidSource : '';
+};
+let activeTheme = null;
+let renderSeq = 0;
+async function renderDiagrams(force) {
+  const theme = resolveTheme();
+  if (!force && theme === activeTheme) return;
+  activeTheme = theme;
+  const seq = ++renderSeq;
+  mermaid.initialize({ startOnLoad: false, theme });
+  for (const el of document.querySelectorAll('.mermaid')) {
+    if (seq !== renderSeq) return;
+    const source = readSource(el);
+    if (!source || (el.dataset.mermaidTheme === theme && el.hasAttribute('data-processed'))) continue;
+    delete el.dataset.mermaidTheme;
+    el.removeAttribute('data-processed');
+    el.textContent = source;
+    try {
+      await mermaid.run({ nodes: [el], suppressErrors: true });
+      if (seq === renderSeq) el.dataset.mermaidTheme = theme;
+    } catch {}
+  }
+}
+renderDiagrams(true);
+document.addEventListener('pjax:complete', () => renderDiagrams(true));
+const ignoredAttrs = new Set(['data-processed', 'data-mermaid-source', 'data-mermaid-theme']);
+if (!config.darkSelector.includes('style')) ignoredAttrs.add('style');
+new MutationObserver((mutations) => {
+  if (mutations.some((m) => !ignoredAttrs.has(m.attributeName))) renderDiagrams(false);
+}).observe(document.documentElement, { attributes: true, subtree: true });
+JS;
+
+        return sprintf(
+            '<script type="module">import mermaid from "%s";%s</script>',
+            $cdnUrl,
+            str_replace('__MERMAID_CONFIG__', $encodedConfig, $runtimeScript)
+        );
+    }
+
+    private static function buildMathJaxScript(string $cdnUrl): string
+    {
+        return '<script type="text/javascript">(function(){MathJax={loader: {load: [\'[tex]/gensymb\']},tex:{inlineMath:[[\'$\',\'$\'],[\'\\\\(\',\'\\\\)\']],packages: {\'[+]\': [\'gensymb\']}}}})();</script>'
+            . '<script defer src="https://polyfill.alicdn.com/v3/polyfill.min.js?features=es6"></script>'
+            . sprintf('<script id="MathJax-script" defer type="text/javascript" src="%s"></script>', $cdnUrl);
     }
 }
